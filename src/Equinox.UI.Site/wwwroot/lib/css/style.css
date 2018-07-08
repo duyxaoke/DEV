@@ -1,1 +1,7 @@
-﻿
+﻿th{
+    text-align:center !important;
+}
+#tblData th:last-child{
+    width: 80px;
+    text-align: center;
+}

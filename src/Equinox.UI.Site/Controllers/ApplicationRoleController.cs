@@ -1,7 +1,9 @@
 ﻿using Equinox.Application.ViewModels;
+using Equinox.Domain.Core.Commands;
 using Equinox.Domain.Core.Notifications;
 using Equinox.Infra.CrossCutting.Identity.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace Equinox.UI.Admin.Controllers
 {
+    [Authorize]
     public class ApplicationRoleController : BaseController
     {
         private readonly RoleManager<ApplicationRole> roleManager;
@@ -61,6 +64,7 @@ namespace Equinox.UI.Admin.Controllers
             return PartialView("_AddEditApplicationRole", model);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddEditApplicationRole(string id, ApplicationRoleViewModel model)
         {
             if (ModelState.IsValid)
@@ -74,10 +78,10 @@ namespace Equinox.UI.Admin.Controllers
                                                     : await roleManager.CreateAsync(applicationRole);
                 if (roleRuslt.Succeeded)
                 {
-                    return RedirectToAction("Index");
+                    return Json(new { status = true, message = Command.MessageSuccess });
                 }
             }
-            return View(model);
+            return Json(new { status = false, message = Command.MessageError });
         }
 
         [HttpGet]
@@ -106,11 +110,11 @@ namespace Equinox.UI.Admin.Controllers
                     IdentityResult roleRuslt = roleManager.DeleteAsync(applicationRole).Result;
                     if (roleRuslt.Succeeded)
                     {
-                        return RedirectToAction("Index");
+                        return Json(new { status = true, message = Command.MessageSuccess });
                     }
                 }
             }
-            return View();
+            return Json(new { status = false, message = Command.MessageError });
         }
     }
 }

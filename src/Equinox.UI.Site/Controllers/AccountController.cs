@@ -222,7 +222,7 @@ namespace Equinox.UI.Admin.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email, FirstName = model.Firstname, LastName = model.Lastname, Mobile = model.Mobile };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
 
