@@ -53,11 +53,11 @@ namespace Equinox.UI.Admin
             services.AddAutoMapperSetup();
             services.AddMvc();
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("CanWriteCustomerData", policy => policy.Requirements.Add(new ClaimRequirement("Customers","Write")));
-                options.AddPolicy("CanRemoveCustomerData", policy => policy.Requirements.Add(new ClaimRequirement("Customers", "Remove")));
-            });
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("CanWriteCustomerData", policy => policy.Requirements.Add(new ClaimRequirement("Customers","Write")));
+            //    options.AddPolicy("CanRemoveCustomerData", policy => policy.Requirements.Add(new ClaimRequirement("Customers", "Remove")));
+            //});
 
             // Adding MediatR for Domain Events and Notifications
             services.AddMediatR(typeof(Startup));

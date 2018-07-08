@@ -48,7 +48,6 @@ namespace Equinox.UI.Admin.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "CanWriteCustomerData")]
         [Route("customer-management/register-new")]
         public IActionResult Create()
         {
@@ -56,7 +55,6 @@ namespace Equinox.UI.Admin.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "CanWriteCustomerData")]
         [Route("customer-management/register-new")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(CustomerViewModel customerViewModel)
@@ -71,7 +69,6 @@ namespace Equinox.UI.Admin.Controllers
         }
         
         [HttpGet]
-        [Authorize(Policy = "CanWriteCustomerData")]
         [Route("customer-management/edit-customer/{id:guid}")]
         public IActionResult Edit(Guid? id)
         {
@@ -91,7 +88,6 @@ namespace Equinox.UI.Admin.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "CanWriteCustomerData")]
         [Route("customer-management/edit-customer/{id:guid}")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(CustomerViewModel customerViewModel)
@@ -107,7 +103,6 @@ namespace Equinox.UI.Admin.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "CanRemoveCustomerData")]
         [Route("customer-management/remove-customer/{id:guid}")]
         public IActionResult Delete(Guid? id)
         {
@@ -127,7 +122,6 @@ namespace Equinox.UI.Admin.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        [Authorize(Policy = "CanRemoveCustomerData")]
         [Route("customer-management/remove-customer/{id:guid}")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(Guid id)

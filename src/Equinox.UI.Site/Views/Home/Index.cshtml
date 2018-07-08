@@ -1,4 +1,13 @@
 ﻿@{
     ViewData["Title"] = "Welcome";
 }
+<div ng-controller="HomeController" ng-cloak>
 
+</div>
+
+@section jsScript{
+    <script src="~/ScriptHandler/Home/homeController.js"></script>
+    <script type="text/javascript">
+        addController("HomeController", HomeController);
+    </script>
+}

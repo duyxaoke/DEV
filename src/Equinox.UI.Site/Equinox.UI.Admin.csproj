@@ -28,10 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="2.8.391" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />    
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="4.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink.Loader" Version="14.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,9 +49,15 @@
 
   <ItemGroup>
     <None Include="Views\Shared\Components\Summary\Default.cshtml" />
+    <None Include="wwwroot\App\admin.module.js" />
+    <None Include="wwwroot\App\Controllers\config.controller.js" />
+    <None Include="wwwroot\App\Services\config.service.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Shared\_Layout1.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="wwwroot\lib\js\lib\bootstrap-notify\bootstrap-notify.min.js">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

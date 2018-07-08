@@ -20,8 +20,11 @@
     <link href="~/lib/loading/jquery.loading.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/css/main.css">
     <link href="~/lib/css/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/alertify/themes/alertify.core.css" />
+    <link rel="stylesheet" href="~/lib/alertify/themes/alertify.default.css" />
+
 </head>
-<body class="with-side-menu control-panel control-panel-compact">
+<body ng-app="myApp" class="with-side-menu control-panel control-panel-compact">
     <header class="site-header">
         <div class="container-fluid">
             <a href="#" class="site-logo">
@@ -104,6 +107,14 @@
         </div><!--.container-fluid-->
     </div><!--.page-content-->
     @Html.Partial("_Modal", new BootstrapModel { ID = "modal-action", AreaLabeledId = "modal-action-label", Size = ModalSize.Medium })
+    <script src="~/lib/angular/angular.min.js"></script>
+    <script src="~/lib/alertify/alertify.min.js"></script>
+    @*<script src="~/dist/ScriptHandler/app/app-bundle.min.js"></script>*@
+
+    <script src="~/App/admin.module.js"></script>
+    <script src="~/App/Services/config.service.js"></script>
+    <script src="~/App/Controllers/config.controller.js"></script>
+
     <script src="~/lib/js/lib/jquery/jquery-3.2.1.min.js"></script>
     <script src="~/lib/js/lib/popper/popper.min.js"></script>
     <script src="~/lib/js/lib/tether/tether.min.js"></script>
@@ -118,6 +129,7 @@
     <script src="~/lib/js/lib/bootstrap-notify/bootstrap-notify-init.js"></script>
     <script src="~/lib/js/app.js"></script>
     <script src="~/lib/js/site.js"></script>
+
     <script>
         $(document).bind("ajaxStart.mine", function () {
             sys.Loading();
