@@ -23,7 +23,6 @@ namespace Equinox.WebApi.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         [Route("customer-management")]
         public IActionResult Get()
         {

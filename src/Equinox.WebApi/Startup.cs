@@ -20,14 +20,14 @@ using Equinox.WebApi.Extensions;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.HttpOverrides;
 using AspNetCoreRateLimit;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Equinox.WebApi
 {
     public class Startup
     {
         private IHostingEnvironment HostingEnvironment { get; }
-        public static IConfiguration Configuration { get; set; }
-
+        public static IConfigurationRoot Configuration { get; set; }
         public Startup(IHostingEnvironment env)
         {
             HostingEnvironment = env;
@@ -47,14 +47,24 @@ namespace Equinox.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+            services.AddWebApi(options =>
+            {
+                options.OutputFormatters.Remove(new XmlDataContractSerializerOutputFormatter());
+                options.UseCentralRoutePrefix(new RouteAttribute("api"));
+            });
 
+            services.AddAutoMapperSetup();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("CanWriteCustomerData", policy => policy.Requirements.Add(new ClaimRequirement("Customers", "Write")));
+                options.AddPolicy("CanRemoveCustomerData", policy => policy.Requirements.Add(new ClaimRequirement("Customers", "Remove")));
+            });
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -62,40 +72,24 @@ namespace Equinox.WebApi
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddWebApi(options =>
-            {
-                options.OutputFormatters.Remove(new XmlDataContractSerializerOutputFormatter());
-                //options.UseCentralRoutePrefix(new RouteAttribute("api/v{version}"));
-                options.UseCentralRoutePrefix(new RouteAttribute("api"));
-            });
-
             services.AddPreRenderDebugging(HostingEnvironment);
+
             services.AddOptions();
 
             services.AddResponseCompression();
 
-            services.AddCustomOpenIddict(HostingEnvironment);
-            services.AddDistributedMemoryCache();
             services.AddCustomDbContext();
 
+            services.AddCustomOpenIddict(HostingEnvironment);
+
             services.AddMemoryCache();
-            //configure ip rate limiting middle-ware
-            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
-            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
-            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
-            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
 
-            //configure client rate limiting middleware
-            services.Configure<ClientRateLimitOptions>(Configuration.GetSection("ClientRateLimiting"));
-            services.Configure<ClientRateLimitPolicies>(Configuration.GetSection("ClientRateLimitPolicies"));
-            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
-            //services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
-
-            var opt = new ClientRateLimitOptions();
-            ConfigurationBinder.Bind(Configuration.GetSection("ClientRateLimiting"), opt);
             services.RegisterCustomServices();
 
-            services.AddAutoMapperSetup();
+            services.AddCustomLocalization();
+
+            services.AddCustomizedMvc();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "API", Version = "v1" });
@@ -116,19 +110,6 @@ namespace Equinox.WebApi
                 c.AddSecurityRequirement(security);
 
             });
-
-            //services.AddSwaggerGen(s =>
-            //{
-            //    s.SwaggerDoc("v1", new Info
-            //    {
-            //        Version = "v1",
-            //        Title = "Equinox Project",
-            //        Description = "Equinox API Swagger surface",
-            //        Contact = new Contact { Name = "Eduardo Pires", Email = "contato@eduardopires.net.br", Url = "http://www.eduardopires.net.br" },
-            //        License = new License { Name = "MIT", Url = "https://github.com/EduardoPires/EquinoxProject/blob/master/LICENSE" }
-            //    });
-            //});
-
             // Adding MediatR for Domain Events and Notifications
             services.AddMediatR(typeof(Startup));
 
@@ -142,9 +123,8 @@ namespace Equinox.WebApi
                               ILoggerFactory loggerFactory,
                               IHttpContextAccessor accessor)
         {
+            // app.AddCustomSecurityHeaders();
             loggerFactory.AddConsole();
-            //app.AddCustomSecurityHeaders();
-
             if (env.IsDevelopment())
             {
                 app.AddDevMiddlewares();
@@ -154,9 +134,6 @@ namespace Equinox.WebApi
                 app.UseHsts();
                 app.UseResponseCompression();
             }
-
-            app.UseHttpsRedirection();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -168,6 +145,10 @@ namespace Equinox.WebApi
                 c.AllowAnyMethod();
                 c.AllowAnyOrigin();
             });
+            app.AddCustomLocalization();
+
+            app.UseHttpsRedirection();
+
             // https://github.com/openiddict/openiddict-core/issues/518
             // And
             // https://github.com/aspnet/Docs/issues/2384#issuecomment-297980490
@@ -178,17 +159,15 @@ namespace Equinox.WebApi
             forwarOptions.KnownNetworks.Clear();
             forwarOptions.KnownProxies.Clear();
 
-            app.UseForwardedHeaders(forwarOptions); 
-            app.UseStaticFiles();
+            app.UseForwardedHeaders(forwarOptions);
+
             app.UseAuthentication();
+
+            app.UseStaticFiles();
+
             app.UseCookiePolicy();
 
-            app.UseIpRateLimiting();
-            app.UseClientRateLimiting();
-
-
             app.UseMvc();
-
             app.UseSwagger();
             app.UseSwaggerUI(s =>
             {

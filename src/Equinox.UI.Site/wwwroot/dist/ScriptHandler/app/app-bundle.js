@@ -10,7 +10,7 @@
 
     function ConfigService($http) {
 
-        var baseUrl = '/api/ConfigApi';
+        var baseUrl = 'http://localhost:55555/api/config-management';
 
         return {
             getAll: function () {
@@ -65,13 +65,13 @@
 
         $scope.getAll = function () {
             configService.getAll().success(function (data) {
-                if (data) {
-                    response.data.forEach(function (msg) {
+                if (!data.data) {
+                    response.data.data.forEach(function (msg) {
                         alertify.error('error');
                     });
                     return;
                 }
-                $scope.configs = data;
+                $scope.configs = data.data;
             }).error(function (response) {
                 if (!response.notes) return;
                 response.notes.forEach(function (msg) {
@@ -98,9 +98,7 @@
             configService.update($scope.config).success(function (data) {
                 $scope.config = {};
                 $scope.getAll();
-                data.notes.forEach(function (msg) {
-                    alertify.success(msg.description);
-                });
+                alertify.success('success');
             }).error(function (response) {
                 response.Notes.forEach(function (msg) {
                     alertify.error(msg.description);
@@ -125,20 +123,11 @@
         };
 
         $scope.get = function (id) {
-            configService.get(id).success(function (data) {
-                if (data.notes) {
-                    response.notes.forEach(function (msg) {
-                        alertify.error(msg.description);
-                    });
-                    return;
-                }
-
-                $scope.config = data;
+            configService.get(id).success(function (response) {
+                $scope.config = response.data;
                 $scope.show = true;
             }).error(function (response) {
-                response.notes.forEach(function (msg) {
-                    alertify.error(msg.description);
-                });
+                    alertify.error('error');
             });
         };
 

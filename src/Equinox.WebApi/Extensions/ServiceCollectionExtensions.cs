@@ -161,7 +161,7 @@ namespace Equinox.WebApi.Extensions
                 options.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-               //.AddOAuthValidation()
+               .AddOAuthValidation()
                // https://console.developers.google.com/projectselector/apis/library?pli=1
                .AddGoogle(options =>
                {
@@ -194,9 +194,25 @@ namespace Equinox.WebApi.Extensions
             // Add framework services.
             services.AddDbContextPool<ApplicationDbContext>(options =>
             {
-              var connection = Startup.Configuration["Data:DefaultConnection"];
-              options.UseSqlServer(connection);
-              options.UseSqlServer(connection, b => b.MigrationsAssembly("Equinox.WebApi"));
+                string useSqLite = Startup.Configuration["Data:useSqLite"];
+                string useInMemory = Startup.Configuration["Data:useInMemory"];
+                if (useInMemory.ToLower() == "true")
+                {
+                    options.UseInMemoryDatabase("AspNetCoreSpa"); // Takes database name
+                }
+                else if (useSqLite.ToLower() == "true")
+                {
+                    var connection = Startup.Configuration["Data:SqlLiteConnectionString"];
+                    options.UseSqlite(connection);
+                    options.UseSqlite(connection, b => b.MigrationsAssembly("AspNetCoreSpa.Web"));
+
+                }
+                else
+                {
+                    var connection = Startup.Configuration["Data:SqlServerConnectionString"];
+                    options.UseSqlServer(connection);
+                    options.UseSqlServer(connection, b => b.MigrationsAssembly("AspNetCoreSpa.Web"));
+                }
                 options.UseOpenIddict();
             });
             return services;
@@ -205,19 +221,19 @@ namespace Equinox.WebApi.Extensions
         public static IServiceCollection AddCustomLocalization(this IServiceCollection services)
         {
             services.Configure<RequestLocalizationOptions>(opts =>
-                {
-                    var supportedCultures = new List<CultureInfo>
+            {
+                var supportedCultures = new List<CultureInfo>
                     {
                                 new CultureInfo("en-US"),
                                 new CultureInfo("fr-FR")
                     };
 
-                    opts.DefaultRequestCulture = new RequestCulture("en-US");
-                    // Formatting numbers, dates, etc.
-                    opts.SupportedCultures = supportedCultures;
-                    // UI strings that we have localized.
-                    opts.SupportedUICultures = supportedCultures;
-                });
+                opts.DefaultRequestCulture = new RequestCulture("en-US");
+                // Formatting numbers, dates, etc.
+                opts.SupportedCultures = supportedCultures;
+                // UI strings that we have localized.
+                opts.SupportedUICultures = supportedCultures;
+            });
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -226,21 +242,13 @@ namespace Equinox.WebApi.Extensions
         public static IServiceCollection RegisterCustomServices(this IServiceCollection services)
         {
             // New instance every time, only configuration class needs so its ok
-            //services.AddSingleton<IStringLocalizerFactory, EFStringLocalizerFactory>();
-            //services.AddTransient<IEmailSender, AuthMessageSender>();
-            //services.AddScoped<IUnitOfWork, HttpUnitOfWork>();
             services.AddTransient<IApplicationDataService, ApplicationDataService>();
             services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
-            //services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
-            //services.AddTransient<DbContextOptions>();
-            //services.AddTransient<IdentityOptions>();
             services.AddTransient<ApplicationDbContext>();
             services.AddTransient<UserResolverService>();
             services.AddScoped<ApiExceptionFilter>();
             return services;
         }
-
 
     }
 }

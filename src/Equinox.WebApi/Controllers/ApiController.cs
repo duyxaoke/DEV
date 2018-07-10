@@ -5,9 +5,12 @@ using System.Linq;
 using Equinox.Domain.Core.Bus;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Equinox.WebApi.Filters;
 
 namespace Equinox.WebApi.Controllers
 {
+    [ServiceFilter(typeof(ApiExceptionFilter))]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public abstract class ApiController : ControllerBase
     {
         private readonly DomainNotificationHandler _notifications;

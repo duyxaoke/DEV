@@ -73,7 +73,7 @@ namespace Equinox.Infra.CrossCutting.Identity.Data
         /// <returns></returns>
         public override int SaveChanges()
         {
-            //this.AuditEntities();
+            this.AuditEntities();
             return base.SaveChanges();
         }
         /// <summary>
@@ -82,8 +82,7 @@ namespace Equinox.Infra.CrossCutting.Identity.Data
         /// <returns></returns>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            //this.AuditEntities();
-
+            this.AuditEntities();
             return await base.SaveChangesAsync(cancellationToken);
         }
 
