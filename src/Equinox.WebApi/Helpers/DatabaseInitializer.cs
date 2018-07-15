@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using OpenIddict.Abstractions;
 using OpenIddict.Core;
-using OpenIddict.Models;
+using OpenIddict.EntityFrameworkCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace Equinox.WebApi.Helpers
 
             CreateRoles();
             CreateUsers();
-            await AddOpenIdConnectOptions(configuration);
+            //await AddOpenIdConnectOptions(configuration);
         }
 
 
@@ -86,14 +87,14 @@ namespace Equinox.WebApi.Helpers
 
         private async Task AddOpenIdConnectOptions(IConfiguration configuration)
         {
-            if (await _openIddictApplicationManager.FindByClientIdAsync("lotoid") == null)
+            if (await _openIddictApplicationManager.FindByClientIdAsync("mvc") == null)
             {
                 var host = configuration["HostUrl"].ToString();
 
                 var descriptor = new OpenIddictApplicationDescriptor
                 {
-                    ClientId = "lotoid",
-                    DisplayName = "OpenIdLoto",
+                    ClientId = "mvc",
+                    DisplayName = "mvc-authen",
                     PostLogoutRedirectUris = { new Uri($"{host}signout-oidc") },
                     RedirectUris = { new Uri(host) },
                     Permissions =

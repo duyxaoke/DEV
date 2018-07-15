@@ -26,6 +26,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="2.0.4" />
+    <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="2.0.0-rc3-final" />
   </ItemGroup>
 
   <ItemGroup>

@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http;
 
 namespace Equinox.Infra.CrossCutting.IoC
 {
@@ -108,10 +109,12 @@ namespace Equinox.Infra.CrossCutting.IoC
 
             // Infra - Identity Services
             services.AddTransient<IEmailSender, AuthEmailMessageSender>();
-            services.AddTransient<ISmsSender, AuthSMSMessageSender>();
+            services.AddTransient<ISmsSender, AuthEmailMessageSender>();
 
             // Infra - Identity
             services.AddScoped<IUser, AspNetUser>();
+            services.AddSingleton<HttpClient>();
+
         }
     }
 }

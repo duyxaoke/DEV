@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Equinox.Infra.CrossCutting.Identity.Data
 {
@@ -21,10 +22,10 @@ namespace Equinox.Infra.CrossCutting.Identity.Data
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ApplicationRole> ApplicationRoles { get; set; }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, UserResolverService userService) : base(options)
-        {
-            _userService = userService;
-        }
+        //public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, UserResolverService userService) : base(options)
+        //{
+        //    _userService = userService;
+        //}
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         {
@@ -60,7 +61,7 @@ namespace Equinox.Infra.CrossCutting.Identity.Data
                 modelBuilder.Entity(entityType.ClrType)
                     .Property<string>("UpdatedBy");
             }
-
+            modelBuilder.UseOpenIddict();
             base.OnModelCreating(modelBuilder);
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
@@ -73,7 +74,7 @@ namespace Equinox.Infra.CrossCutting.Identity.Data
         /// <returns></returns>
         public override int SaveChanges()
         {
-            this.AuditEntities();
+            //this.AuditEntities();
             return base.SaveChanges();
         }
         /// <summary>
@@ -82,7 +83,7 @@ namespace Equinox.Infra.CrossCutting.Identity.Data
         /// <returns></returns>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            this.AuditEntities();
+            //this.AuditEntities();
             return await base.SaveChangesAsync(cancellationToken);
         }
 

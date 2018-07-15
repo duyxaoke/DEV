@@ -60,11 +60,7 @@ namespace Equinox.WebApi
             });
 
             services.AddAutoMapperSetup();
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("CanWriteCustomerData", policy => policy.Requirements.Add(new ClaimRequirement("Customers", "Write")));
-                options.AddPolicy("CanRemoveCustomerData", policy => policy.Requirements.Add(new ClaimRequirement("Customers", "Remove")));
-            });
+            services.AddAuthorization();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

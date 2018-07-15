@@ -82,44 +82,44 @@ namespace Equinox.WebApi.Extensions
             });
 
             // Register the OpenIddict services.
-            services.AddOpenIddict(options =>
-            {
-                // Register the Entity Framework stores.
-                options.AddEntityFrameworkCoreStores<ApplicationDbContext>();
+            //services.AddOpenIddict(options =>
+            //{
+            //    // Register the Entity Framework stores.
+            //    options.AddEntityFrameworkCoreStores<ApplicationDbContext>();
 
-                // Register the ASP.NET Core MVC binder used by OpenIddict.
-                // Note: if you don't call this method, you won't be able to
-                // bind OpenIdConnectRequest or OpenIdConnectResponse parameters.
-                options.AddMvcBinders();
+            //    // Register the ASP.NET Core MVC binder used by OpenIddict.
+            //    // Note: if you don't call this method, you won't be able to
+            //    // bind OpenIdConnectRequest or OpenIdConnectResponse parameters.
+            //    options.AddMvcBinders();
 
-                // Enable the token endpoint.
-                // Form password flow (used in username/password login requests)
-                options.EnableTokenEndpoint("/connect/token");
+            //    // Enable the token endpoint.
+            //    // Form password flow (used in username/password login requests)
+            //    options.EnableTokenEndpoint("/connect/token");
 
-                // Enable the authorization endpoint.
-                // Form implicit flow (used in social login redirects)
-                options.EnableAuthorizationEndpoint("/connect/authorize");
+            //    // Enable the authorization endpoint.
+            //    // Form implicit flow (used in social login redirects)
+            //    options.EnableAuthorizationEndpoint("/connect/authorize");
 
-                // Enable the password and the refresh token flows.
-                options.AllowPasswordFlow()
-                       .AllowRefreshTokenFlow()
-                       .AllowImplicitFlow(); // To enable external logins to authenticate
+            //    // Enable the password and the refresh token flows.
+            //    options.AllowPasswordFlow()
+            //           .AllowRefreshTokenFlow()
+            //           .AllowImplicitFlow(); // To enable external logins to authenticate
 
-                options.SetAccessTokenLifetime(TimeSpan.FromMinutes(30));
-                options.SetIdentityTokenLifetime(TimeSpan.FromMinutes(30));
-                options.SetRefreshTokenLifetime(TimeSpan.FromMinutes(60));
-                // During development, you can disable the HTTPS requirement.
-                if (env.IsDevelopment())
-                {
-                    options.DisableHttpsRequirement();
-                }
+            //    options.SetAccessTokenLifetime(TimeSpan.FromMinutes(30));
+            //    options.SetIdentityTokenLifetime(TimeSpan.FromMinutes(30));
+            //    options.SetRefreshTokenLifetime(TimeSpan.FromMinutes(60));
+            //    // During development, you can disable the HTTPS requirement.
+            //    if (env.IsDevelopment())
+            //    {
+            //        options.DisableHttpsRequirement();
+            //    }
 
-                // Note: to use JWT access tokens instead of the default
-                // encrypted format, the following lines are required:
-                //
-                // options.UseJsonWebTokens();
-                options.AddEphemeralSigningKey();
-            });
+            //    // Note: to use JWT access tokens instead of the default
+            //    // encrypted format, the following lines are required:
+            //    //
+            //    // options.UseJsonWebTokens();
+            //    options.AddEphemeralSigningKey();
+            //});
 
             // If you prefer using JWT, don't forget to disable the automatic
             // JWT -> WS-Federation claims mapping used by the JWT middleware:

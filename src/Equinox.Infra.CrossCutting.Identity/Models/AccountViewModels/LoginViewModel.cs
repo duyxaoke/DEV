@@ -5,7 +5,8 @@ namespace Equinox.Infra.CrossCutting.Identity.Models.AccountViewModels
     public class LoginViewModel
     {
         [Required]
-        public string UserName { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

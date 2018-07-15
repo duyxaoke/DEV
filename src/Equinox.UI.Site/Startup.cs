@@ -13,92 +13,78 @@ using Equinox.UI.Admin.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 
 namespace Equinox.UI.Admin
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
-
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-        
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            .AddCookie(options =>
+            {
+                options.LoginPath = new PathString("/signin");
+            })
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(o => {
-                    o.LoginPath = new PathString("/login");
-                    o.AccessDeniedPath = new PathString("/home/access-denied");
-                })
-                .AddFacebook(o =>
+            .AddOpenIdConnect(options =>
+            {
+                // Note: these settings must match the application details
+                // inserted in the database at the server level.
+                options.ClientId = "mvc";
+                options.ClientSecret = "901564A5-E7FE-42CB-B10D-61EF6A8F3654";
+
+                options.RequireHttpsMetadata = false;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.SaveTokens = true;
+
+                // Use the authorization code flow.
+                options.ResponseType = OpenIdConnectResponseType.Code;
+                options.AuthenticationMethod = OpenIdConnectRedirectBehavior.RedirectGet;
+
+                // Note: setting the Authority allows the OIDC client middleware to automatically
+                // retrieve the identity provider's configuration and spare you from setting
+                // the different endpoints URIs or the token validation parameters explicitly.
+                options.Authority = "http://localhost:50000/";
+
+                options.Scope.Add("email");
+                options.Scope.Add("roles");
+                options.Scope.Add("offline_access");
+
+                options.SecurityTokenValidator = new JwtSecurityTokenHandler
                 {
-                    o.AppId = Configuration["Authentication:Facebook:AppId"];
-                    o.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
-                })
-                .AddGoogle(googleOptions =>
-                {
-                    googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
-                    googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
-                });
+                    // Disable the built-in JWT claims mapping feature.
+                    InboundClaimTypeMap = new Dictionary<string, string>()
+                };
 
-            services.AddAutoMapperSetup();
+                options.TokenValidationParameters.NameClaimType = "name";
+                options.TokenValidationParameters.RoleClaimType = "role";
+            });
+
             services.AddMvc();
 
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("CanWriteCustomerData", policy => policy.Requirements.Add(new ClaimRequirement("Customers","Write")));
-            //    options.AddPolicy("CanRemoveCustomerData", policy => policy.Requirements.Add(new ClaimRequirement("Customers", "Remove")));
-            //});
-
-            // Adding MediatR for Domain Events and Notifications
-            services.AddMediatR(typeof(Startup));
-
-            // .NET Native DI Abstraction
-            RegisterServices(services);
+            services.AddSingleton<HttpClient>();
         }
 
-        public void Configure(IApplicationBuilder app,
-                                      IHostingEnvironment env,
-                                      ILoggerFactory loggerFactory,
-                                      IHttpContextAccessor accessor)
+        public void Configure(IApplicationBuilder app)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
+            app.UseDeveloperExceptionPage();
 
             app.UseStaticFiles();
-            app.UseAuthentication();
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=welcome}/{id?}");
-            });
-        }
 
-        private static void RegisterServices(IServiceCollection services)
-        {
-            // Adding dependencies from another layers (isolated from Presentation)
-            NativeInjectorBootStrapper.RegisterServices(services);
+            app.UseAuthentication();
+
+            app.UseMvc();
         }
     }
+
 }
 

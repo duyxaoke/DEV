@@ -1,44 +1,48 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Equinox.UI.Admin.Controllers
 {
-    [Route("home")]
     public class HomeController : Controller
     {
-        [Route("welcome")]
-        [Route("")]
-        [Route("/")]
-        public IActionResult Index()
+        private readonly HttpClient _client;
+
+        public HomeController(HttpClient client)
         {
-            return View();
+            _client = client;
         }
 
-        [Route("about")]
-        public IActionResult About()
+        [HttpGet("~/")]
+        public ActionResult Index()
         {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
+            return View("Home");
         }
 
-        [Route("contact")]
-        public IActionResult Contact()
+        [Authorize, HttpPost("~/")]
+        public async Task<ActionResult> Index(CancellationToken cancellationToken)
         {
-            ViewData["Message"] = "Your contact page.";
+            var token = await HttpContext.GetTokenAsync(CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectParameterNames.AccessToken);
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new InvalidOperationException("The access token cannot be found in the authentication ticket. " +
+                                                    "Make sure that SaveTokens is set to true in the OIDC options.");
+            }
 
-            return View();
-        }
+            var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:50000/api/message");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        [Route("error")]
-        public IActionResult Error()
-        {
-            return View();
-        }
+            var response = await _client.SendAsync(request, cancellationToken);
+            response.EnsureSuccessStatusCode();
 
-        [Route("access-denied")]
-        public IActionResult AccessDenied()
-        {
-            return View();
+            return View("Home", model: await response.Content.ReadAsStringAsync());
         }
     }
 }
