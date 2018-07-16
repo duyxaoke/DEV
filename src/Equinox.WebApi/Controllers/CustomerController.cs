@@ -40,7 +40,6 @@ namespace Equinox.WebApi.Controllers
         }     
 
         [HttpPost]
-        [Authorize(Policy = "CanWriteCustomerData")]
         [Route("customer-management")]
         public IActionResult Post([FromBody]CustomerViewModel customerViewModel)
         {
@@ -56,7 +55,6 @@ namespace Equinox.WebApi.Controllers
         }
         
         [HttpPut]
-        [Authorize(Policy = "CanWriteCustomerData")]
         [Route("customer-management")]
         public IActionResult Put([FromBody]CustomerViewModel customerViewModel)
         {
@@ -72,7 +70,6 @@ namespace Equinox.WebApi.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = "CanRemoveCustomerData")]
         [Route("customer-management")]
         public IActionResult Delete(Guid id)
         {

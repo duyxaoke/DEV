@@ -3,88 +3,111 @@
 @using Microsoft.AspNetCore.Http.Authentication
 @model LoginViewModel
 @inject SignInManager<ApplicationUser> SignInManager
-
 @{
     ViewData["Title"] = "Log in";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- End Required meta tags -->
+    <!-- Begin SEO tag -->
+    <title>AuthorizationServer</title>
+    <meta property="og:title" content="Starter Template">
+    <meta name="author" content="Beni Arisandi">
+    <meta property="og:locale" content="en_US">
+    <meta name="description" content="Responsive admin theme build on top of Bootstrap 4">
+    <meta property="og:description" content="Responsive admin theme build on top of Bootstrap 4">
+    <link rel="canonical" href="index.html">
+    <meta property="og:url" content="index.html">
+    <meta property="og:site_name" content="Looper - Bootstrap 4 Admin Theme">
+    <!-- End SEO tag -->
+    <!-- FAVICONS -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/assets/apple-touch-icon.png">
+    <link rel="shortcut icon" href="~/assets/favicon.ico">
+    <meta name="theme-color" content="#3063A0">
+    <!-- End FAVICONS -->
+    <script src="~/assets/vendor/pace/pace.min.js"></script>
+    <!-- BEGIN BASE STYLES -->
+    <link rel="stylesheet" href="~/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/vendor/fontawesome/css/fontawesome.all.css">
+    <!-- END BASE STYLES -->
+    <!-- BEGIN THEME STYLES -->
+    <link rel="stylesheet" href="~/assets/stylesheets/main.min.css">
+    <link rel="stylesheet" href="~/assets/stylesheets/custom.css">
+    <!-- END THEME STYLES -->
+</head>
+<body>
+    <!-- .auth -->
+    <main class="auth">
+        <header id="auth-header" class="auth-header" style="background-image: url(/assets/images/illustration/img-1.png);">
+            <h1>
+                <img src="~/assets/images/brand-inverse.png" alt="" height="72">
+                <span class="sr-only">Sign In</span>
+            </h1>
+            <p>
+                Don't have a account?
+                <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Register</a>
+            </p>
+        </header>
+        <!-- form -->
+        <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="auth-form">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <!-- .form-group -->
+            <div class="form-group">
+                <div class="form-label-group">
+                    <input asp-for="Email" class="form-control" required="" autofocus="">
+                    <label asp-for="Email"></label>
+                </div>
+            </div>
+            <!-- /.form-group -->
+            <!-- .form-group -->
+            <div class="form-group">
+                <div class="form-label-group">
+                    <input asp-for="Password" class="form-control" required="">
+                    <label asp-for="Password"></label>
+                </div>
+            </div>
+            <!-- .form-group -->
+            <div class="form-group">
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign In</button>
+            </div>
+            <!-- /.form-group -->
+            <!-- /.form-group -->
+            <!-- .form-group -->
+            <div class="form-group text-center">
+                <div class="custom-control custom-control-inline custom-checkbox">
+                    <input asp-for="RememberMe" class="custom-control-input">
+                    <label class="custom-control-label" asp-for="RememberMe">Keep me sign in</label>
+                </div>
+            </div>
+            <!-- /.form-group -->
+            <!-- recovery links -->
+            <div class="text-center pt-3">
+                <a asp-action="ForgotPassword" class="link">Forgot your password?</a>
+                <span class="mx-2">·</span>
+                <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Register as a new user?</a>
+            </div>
+            <!-- /recovery links -->
+        </form>
+        <!-- /.auth-form -->
+        <!-- copyright -->
+        <footer class="auth-footer">
+            © 2018 All Rights Reserved.
+            <a href="#">Privacy</a> and
+            <a href="#">Terms</a>
+        </footer>
+    </main>
+    <!-- /.auth -->
+    <!-- BEGIN PLUGINS JS -->
+    <script src="~/assets/vendor/particles.js/particles.min.js"></script>
+    <script>
+      particlesJS.load('auth-header', '/assets/javascript/particles.json');
+    </script>
+    <!-- END PLUGINS JS -->
+</body>
 
-<h2>@ViewData["Title"].</h2>
-<div class="row">
-    <div class="col-md-8">
-        <section>
-            <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
-                <h4>Use a local account to log in.</h4>
-                <hr />
-                <div asp-validation-summary="All" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Email" class="col-md-2 control-label"></label>
-                    <div class="col-md-10">
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Password" class="col-md-2 control-label"></label>
-                    <div class="col-md-10">
-                        <input asp-for="Password" class="form-control" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <div class="checkbox">
-                            <input asp-for="RememberMe" />
-                            <label asp-for="RememberMe"></label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <button type="submit" class="btn btn-default">Log in</button>
-                    </div>
-                </div>
-                <p>
-                    <a asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]">Register as a new user?</a>
-                </p>
-                <p>
-                    <a asp-action="ForgotPassword">Forgot your password?</a>
-                </p>
-            </form>
-        </section>
-    </div>
-    <div class="col-md-4">
-        <section>
-            <h4>Use another service to log in.</h4>
-            <hr />
-            @{
-                var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-                if (loginProviders.Count == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See <a href="http://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                            for details on setting up this ASP.NET application to support logging in via external services.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form asp-controller="Account" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
-                        <div>
-                            <p>
-                                @foreach (var provider in loginProviders)
-                                {
-                                    <button type="submit" class="btn btn-default" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.Name</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
-    </div>
-</div>
-
-@section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}
+</html>

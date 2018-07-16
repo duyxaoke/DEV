@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Equinox.Server.ViewModels;
 using Equinox.Infra.CrossCutting.Identity.Models;
 using Equinox.Infra.CrossCutting.Identity.Data;
 using Equinox.Infra.CrossCutting.Identity.Models.AccountViewModels;

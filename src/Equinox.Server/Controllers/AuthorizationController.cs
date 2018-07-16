@@ -14,7 +14,6 @@ using AspNet.Security.OpenIdConnect.Primitives;
 using Equinox.Infra.CrossCutting.Identity.Authorization;
 using Equinox.Infra.CrossCutting.Identity.Models;
 using Equinox.Server.Helpers;
-using Equinox.Server.ViewModels.Shared;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

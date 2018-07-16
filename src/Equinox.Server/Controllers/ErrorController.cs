@@ -5,7 +5,7 @@
  */
 
 using AspNet.Security.OpenIdConnect.Primitives;
-using Equinox.Server.ViewModels.Shared;
+using Equinox.Infra.CrossCutting.Identity.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
