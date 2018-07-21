@@ -6,7 +6,7 @@
 
     function ConfigService($http) {
 
-        var baseUrl = 'http://localhost:55555/api/config-management';
+        var baseUrl = 'http://localhost:55555/api/config';
 
         return {
             getAll: function () {

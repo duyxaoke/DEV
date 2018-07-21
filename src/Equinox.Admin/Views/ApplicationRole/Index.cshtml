@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Equinox.Application.ViewModels.ApplicationRoleListViewModel>
+
+@{
+    ViewData["Title"] = "Roles Manage";
+}
+<section class="box-typical">
+    <header class="box-typical-header">
+        <div class="tbl-row">
+            <div class="tbl-cell tbl-cell-title">
+                <h3>23 Reports</h3>
+            </div>
+            <div class="tbl-cell tbl-cell-action-bordered">
+                <a  data-toggle="modal" asp-action="AddEditApplicationRole" data-target="#modal-action" class="action-btn"><i class="font-icon font-icon-plus-1 text-primary"></i></a>
+            </div>
+        </div>
+    </header>
+    <div class="box-typical-body m-t-md">
+        <div class="table-responsive">
+            <table id="tblData" class="display table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Users</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.RoleName</td>
+                            <td>@item.Description</td>
+                            <td>@item.NumberOfUsers</td>
+                            <td class="text-center">
+                                <div class="tabledit-toolbar btn-toolbar">
+                                    <div class="btn-group btn-group-sm">
+                                        <a data-toggle="modal" asp-action="AddEditApplicationRole" asp-route-id="@item.Id" data-target="#modal-action" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
+                                        <a data-toggle="modal" asp-action="DeleteApplicationRole" asp-route-id="@item.Id" data-target="#modal-action" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-trash"></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div><!--.box-typical-body-->
+</section>
+
+@section scripts
+    {
+    <script>
+        $(function () {
+            $('#tblData').DataTable();
+        })
+    </script>
+
+}

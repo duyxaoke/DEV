@@ -36,7 +36,7 @@ namespace Equinox.UI.Admin.Controllers
                                                     "Make sure that SaveTokens is set to true in the OIDC options.");
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:50000/api/message");
+            var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:50000/api/config/list");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await _client.SendAsync(request, cancellationToken);

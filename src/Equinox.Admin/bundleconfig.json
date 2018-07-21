@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFileName": "wwwroot/dist/ScriptHandler/app/app-bundle.js",
+    "inputFiles": [
+      "wwwroot/App/admin.module.js",
+      "wwwroot/App/Services/config.service.js",
+      "wwwroot/App/Controllers/config.controller.js"
+    ]
+  }
+]

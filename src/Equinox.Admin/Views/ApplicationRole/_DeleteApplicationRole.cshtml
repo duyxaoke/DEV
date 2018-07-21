@@ -1,0 +1,31 @@
+﻿@model string
+@using Equinox.Application.ViewModels
+
+
+<form asp-action="DeleteApplicationRole" role="form">
+    @Html.AntiForgeryToken()
+    @await Html.PartialAsync("_ModalHeader", new ModalHeader { Heading = "Delete Application Role" })
+
+    <div class="modal-body form-horizontal">
+        Are you want to delete @Model?
+    </div>
+    @await Html.PartialAsync("_ModalFooter", new ModalFooter { SubmitButtonText = "Delete" })
+</form>
+<script>
+    $("form").submit(function (event) {
+        event.preventDefault();
+        if ($('form').valid()) {
+        let url = $("form").attr('action');
+        let data = $("form").serialize();
+        $.when(sys.CallAjax(url, data))
+            .done(function (response) {
+                $('#modal-action').modal('hide');
+                sys.Alert(response.status, response.message);
+                $('#tblData').DataTable().ajax.reload(null, false);
+            })
+            .fail(function (error) {
+                sys.Alert(false, @Command.MessageError);
+            });
+        }
+    });
+</script>

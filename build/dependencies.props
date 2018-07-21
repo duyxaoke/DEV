@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <AspNetCoreVersion>2.0.0</AspNetCoreVersion>
+    <AspNetCoreVersion>2.0.3</AspNetCoreVersion>
     <AspNetContribOpenIdExtensionsVersion>2.0.0-rc3-final</AspNetContribOpenIdExtensionsVersion>
     <JsonNetVersion>10.0.2</JsonNetVersion>
     <NetStandardImplicitPackageVersion>2.0.0</NetStandardImplicitPackageVersion>

@@ -72,6 +72,16 @@ namespace Equinox.UI.Admin
             services.AddMvc();
 
             services.AddSingleton<HttpClient>();
+            // Adding MediatR for Domain Events and Notifications
+            services.AddMediatR(typeof(Startup));
+            // .NET Native DI Abstraction
+            RegisterServices(services);
+
+        }
+        private static void RegisterServices(IServiceCollection services)
+        {
+            // Adding dependencies from another layers (isolated from Presentation)
+            NativeInjectorBootStrapper.RegisterServices(services);
         }
 
         public void Configure(IApplicationBuilder app)
