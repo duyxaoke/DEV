@@ -27,6 +27,8 @@
     <link rel="stylesheet" href="~/assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/assets/vendor/open-iconic/css/open-iconic-bootstrap.min.css">
     <link rel="stylesheet" href="~/assets/vendor/fontawesome/css/fontawesome.all.css">
+    <link href="~/assets/vendor/datatables/extensions/buttons/buttons.bootstrap4.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/assets/vendor/toastr/toastr.min.css">
     <!-- END BASE STYLES -->
     <!-- BEGIN THEME STYLES -->
     <link rel="stylesheet" href="~/assets/stylesheets/main.min.css">
@@ -59,6 +61,7 @@
                         <!-- .page-section -->
                         <div class="page-section">
                             @RenderBody()
+                            @Html.Partial("_Modal", new BootstrapModel { ID = "modal-action", AreaLabeledId = "modal-action", Size = ModalSize.Large })
                             <!-- page content goes here -->
                         </div>
                         <!-- /.page-section -->
@@ -76,10 +79,17 @@
     <script src="~/assets/vendor/jquery/jquery.min.js"></script>
     <script src="~/assets/vendor/bootstrap/js/popper.min.js"></script>
     <script src="~/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <!-- FOR MODAL -->
+    <script src="~/assets/vendor/jquery/jquery-2.2.4.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/js/bootstrap-3.3.6.min.js"></script>
+
     <!-- END BASE JS -->
     <!-- BEGIN PLUGINS JS -->
     <script src="~/assets/vendor/stacked-menu/stacked-menu.min.js"></script>
     <script src="~/assets/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="~/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/assets/vendor/datatables/dataTables.bootstrap4.min.js.js"></script>
+    <script src="~/assets/vendor/toastr/toastr.min.js"></script>
     <!-- END PLUGINS JS -->
     <!-- BEGIN THEME JS -->
     <script src="~/assets/javascript/main.min.js"></script>
@@ -87,10 +97,49 @@
     @if (User?.Identity?.IsAuthenticated ?? false)
     {
         <script>
+            var urlApi = "http://localhost:50000/api/";
             var localPrincipal = "@ViewBag.Token";
         </script>
     }
+    <script>
+        (function ($) {
+            function InitModal() {
+                var $this = this;
 
+                function initilizeModel() {
+                    $("#modal-action").on('shown.bs.modal', function (e) {
+
+                    }).on('hidden.bs.modal', function (e) {
+                        $(this).removeData('bs.modal');
+                    });
+                }
+                $this.init = function () {
+                    initilizeModel();
+                }
+            }
+            $(function () {
+                var self = new InitModal();
+                self.init();
+            })
+            //form to JSON
+            $.fn.serializeFormJSON = function () {
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function () {
+                    if (o[this.name]) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
+
+        }(jQuery))
+    </script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

@@ -1,9 +1,6 @@
 ﻿var sys = (function () {
-    var baseUrl = 'http://localhost:50000/api/';
-
     var Alert, Loading, HideLoading, CheckNull, CheckNumber, CheckExistAttribute, DeleteRow, FormatMoney,
         UnFormatMoney, GetURLParameter, UrlDecode, FormatDate, GetMethod, PostMethod, PutMethod, DeleteMethod, SetCache, GetCache, RemoveCache;
-
 
     SetCache = function (key, value) {
         localStorage.setItem(key, JSON.stringify(value));
@@ -108,7 +105,8 @@
     GetMethod = function (url, params) {
         return $.ajax({
             type: "Get",
-            url: baseUrl + url,
+            url: urlApi + url,
+            dataType: "json",
             data: params,
             headers: {
                 'Authorization': "Bearer " + localPrincipal,
@@ -119,12 +117,14 @@
     //call ajax to post data
     PostMethod = function (url, params) {
         return $.ajax({
-            type: "Post",
-            url: baseUrl + url,
-            data: params,
+            'type': 'POST',
+            'url': urlApi + url,
+            'data': JSON.stringify(params),
+            'dataType': 'json',
             headers: {
                 'Authorization': "Bearer " + localPrincipal,
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
             },
         });
     };
@@ -132,7 +132,8 @@
     PutMethod = function (url, params) {
         return $.ajax({
             type: "Put",
-            url: baseUrl + url,
+            url: urlApi + url,
+            dataType: "json",
             data: params,
             headers: {
                 'Authorization': "Bearer " + localPrincipal,
@@ -144,7 +145,8 @@
     DeleteMethod = function (url, params) {
         return $.ajax({
             type: "Delete",
-            url: baseUrl + url,
+            url: urlApi + url,
+            dataType: "json",
             data: params,
             headers: {
                 'Authorization': "Bearer " + localPrincipal,

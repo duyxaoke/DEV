@@ -9,7 +9,6 @@ namespace Equinox.Application.ViewModels
         [Key]
         public Guid Id { get; set; }
 
-        [Required(ErrorMessage = "The System Enable is Required")]
         [DisplayName("SystemEnable")]
         public bool SystemEnable { get; set; }
 
@@ -19,7 +18,7 @@ namespace Equinox.Application.ViewModels
         [DisplayName("Currency")]
         public string Currency { get; set; }
 
-        [Range(0, 40, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+        [Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
         [DisplayName("ReferalBonus")]
         public decimal? ReferalBonus { get; set; }
     }

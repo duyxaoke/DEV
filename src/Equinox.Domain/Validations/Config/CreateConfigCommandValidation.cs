@@ -6,7 +6,6 @@ namespace Equinox.Domain.Validations
     {
         public CreateConfigCommandValidation()
         {
-            ValidateSystemEnable();
             ValidateCurrency();
             ValidateReferalBonus();
         }

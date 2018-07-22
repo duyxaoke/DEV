@@ -1,0 +1,57 @@
+﻿@model ConfigViewModel
+
+<form role="form">
+    @Html.Partial("_ModalHeader", new ModalHeader { Heading = "Add config" })
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Currency" class="control-label"></label>
+                        <input asp-for="Currency" class="form-control" required/>
+                        <span asp-validation-for="Currency" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ReferalBonus" class="control-label"></label>
+                        <input asp-for="ReferalBonus" class="form-control" required/>
+                        <span asp-validation-for="ReferalBonus" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input asp-for="SystemEnable" class="custom-control-input">
+                            <label class="custom-control-label" for="SystemEnable">@Html.DisplayNameFor(model => model.SystemEnable)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("_ModalFooter", new ModalFooter { })
+</form>
+<script>
+   $("form").submit(function (event) {
+       event.preventDefault();
+       let data = $(this).serializeFormJSON();
+       var obj = new Object();
+       obj.Currency = "VND";
+       obj.ReferalBonus = "1";
+       obj.SystemEnable = false;
+       console.log(data);
+
+       
+       $.when(sys.PostMethod('Config/create', obj))
+            .done(function (response) {
+                $('#modal-action').modal('hide');
+                sys.Alert(response.status, 'Tạo thành công!');
+                $('#myTable').DataTable().ajax.reload(null, false);
+            })
+           .fail(function (error) {
+               sys.Alert(false, error);
+            });
+    });
+</script>

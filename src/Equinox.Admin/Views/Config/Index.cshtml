@@ -4,64 +4,151 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="test">
+<!-- .card -->
+<section class="card">
+    <!-- floating action -->
+    <button href="@Url.Action("Add","Config")" data-toggle="modal" data-target="#modal-action" class="btn btn-success btn-floated">
+        <span class="fa fa-plus"></span>
+    </button>
+    <!-- /floating action -->
+    <!-- .card-body -->
+    <div class="card-body">
+        <fieldset>
+            <legend>@ViewData["Title"].</legend>
+            <table id="myTable" class="table table-hover"></table>
 
-</div>
-<div ng-controller="configController">
-    <form>
-        <div class="row" ng-show="show">
-            <h3>Currency</h3>
-            <div class="col-lg-3">
-                <label>Currency:</label>
-                <input type="text" ng-model="config.currency" class="form-control" />
-            </div>
-            <div class="col-lg-3">
-                <label>ReferalBonus:</label>
-                <input type="number" ng-model="config.referalBonus" class="form-control" />
-            </div>
-        </div>
-        <div class="row" style="margin-top: 15px;" ng-show="show">
-            <div class="col-lg-12">
-                <button class="btn btn-success" ng-click="insert()">Insert</button>
-                <button class="btn btn-success" ng-click="update()">Update</button>
-                <button class="btn" ng-click="config = {}">Clear</button>
-                <button class="btn" ng-click="show = false">Close</button>
-            </div>
-        </div>
-    </form>
-    <hr />
-    <div class="row well">
-        <div class="col-lg-12">
-            <h3>Cities <a ng-click="show = true">(New)</a></h3>
-            <table class="table table-striped">
-                <tr>
-                    <th>Id</th>
-                    <th>Currency</th>
-                    <th>ReferalBonus</th>
-                    <th></th>
-                </tr>
-                <tr ng-repeat="c in configs">
-                    <td>{{c.id}}</td>
-                    <td>{{c.currency}}</td>
-                    <td>{{c.referalBonus}}</td>
-                    <td>
-                        <button class="btn btn-info" ng-click="get(c.id)">Edit</button>
-                        <button class="btn btn-danger" ng-click="remove(c.id)">Remove</button>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        </fieldset>
     </div>
-</div>
+    <!-- /.card-body -->
+</section>
+
+
 @section scripts{
     <script>
-        var baseUrl = 'config/list';
-        $.when(sys.GetMethod(baseUrl))
-            .done(function (response) {
-                alert(response);
-            })
-            .fail(function (error) {
-                alert(error);
+        $(function () {
+            var peopleList = $('#myTable').DataTable({
+                serverSide: true,
+                processing: true,
+                language: {
+                    paginate: {
+                        previous: '<i class="fa fa-lg fa-angle-left"></i>',
+                        next: '<i class="fa fa-lg fa-angle-right"></i>'
+                    }
+                },
+                ajax: {
+                    url: urlApi + "Config/pageData",
+                    type: 'POST',
+                    beforeSend: function (request) {
+                        request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
+                    }
+                },
+                columnDefs: [
+                    {
+                        targets: 2,
+                       width: "150px",
+                    render: function render(data, type, row, meta) {
+                        return '<a class="btn btn-sm btn-secondary" href="#' + data + '"><i class="fa fa-pencil-alt"></i></a>\n          <a class="btn btn-sm btn-secondary" href="#' + data + '"><i class="far fa-trash-alt"></i></a>';
+                    }
+                }],
+                columns: [
+                    { data: "Currency", name: "Currency", title: "Currency", className: 'align-middle', orderable: false, searchable: false },
+                    { data: "ReferalBonus", name: "ReferalBonus", className: 'align-middle', title: "Referal bonus (%)" },
+                    { data: 'Id', className: 'align-middle text-center', title: "Action", orderable: false, searchable: false }
+                ]
             });
+        });
+
+                    //$(document).ready(function () {
+
+                    //    $("#myTable").DataTable({
+
+                    //        "processing": true, // for show progress bar
+                    //        "serverSide": true, // for process server side
+                    //        "filter": true, // this is for disable filter (search box)
+                    //        "orderMulti": false, // for disable multiple column at once
+                    //        "pageLength": 10,
+
+                    //        "ajax": {
+                    //            'url': "http://localhost:50000/api/" + "Config/pageData",
+                    //            'type': 'POST',
+                    //            'beforeSend': function (request) {
+                    //                request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
+                    //            },
+                    //            'data': function (data) { return data = JSON.stringify(data); }
+                    //        },
+
+                    //        "columnDefs":
+                    //            [
+                    //                {
+                    //                    "targets": [0],
+                    //                    "visible": false,
+                    //                    "searchable": false
+                    //                }
+                    //            ],
+
+                    //        "columns": [
+                    //            { "data": "Id", "name": "Currency", "autoWidth": true },
+                    //            { "data": "Currency", "title": "tientes", "name": "Currency", "autoWidth": true },
+                    //            {
+                    //                "render": function (data, type, full, meta) {
+                    //                    return '<a class="btn btn-info" href="/Demo/Edit/' + full.Id + '">Edit</a>';
+                    //                }
+                    //            },
+                    //            {
+                    //                data: null, render: function (data, type, row) {
+                    //                    return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.Id + "'); >Delete</a>";
+                    //                }
+                    //            },
+
+                    //        ]
+
+                    //    });
+                    //});
+
+                        //$(document).ready(function () {
+                        //    var oTable = $('#datatab').DataTable({
+                        //        "serverSide": true,
+                        //        "ajax": {
+                        //            'url': "http://localhost:50000/api/" + "Config/pageData",
+                        //            'type': 'POST',
+                        //            'beforeSend': function (request) {
+                        //                request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
+                        //            },
+                        //            'data': function (data) { return data = JSON.stringify(data); }
+                        //        },
+                        //        "dom": 'frtiS',
+                        //        "scroller": {
+                        //            loadingIndicator: false
+                        //        },
+                        //        "processing": true,
+                        //        "paging": true,
+                        //        "deferRender": true,
+                        //        "columns": [
+                        //            { "data": "Id" },
+                        //            { "data": "Currency" }
+                        //        ],
+                        //        "order": [0, "asc"]
+
+                        //    });
+
+                        //    oTable.columns().every(function () {
+                        //        var that = this;
+
+                        //        $('input', this.footer()).on('keyup change', function () {
+                        //            that
+                        //                .search(this.value)
+                        //                .draw();
+                        //        });
+                        //    });
+
+                        //});
+                        //var baseUrl = 'config/list';
+                        //$.when(sys.GetMethod(baseUrl))
+                        //    .done(function (response) {
+                        //        alert(response);
+                        //    })
+                        //    .fail(function (error) {
+                        //        alert(error);
+                        //    });
     </script>
 }

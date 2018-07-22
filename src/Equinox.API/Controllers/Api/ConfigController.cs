@@ -1,5 +1,6 @@
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using Equinox.API.Helpers;
 using Equinox.Application.Interfaces;
 using Equinox.Application.ViewModels;
 using Equinox.Domain.Core.Bus;
@@ -7,6 +8,7 @@ using Equinox.Domain.Core.Notifications;
 using Equinox.Infra.CrossCutting.Identity.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Validation;
@@ -83,6 +85,17 @@ namespace Equinox.API.Controllers.Api
 
             return Response();
         }
+        [HttpPost]
+        [Route("pageData")]
+        public IActionResult Data()
+        {
+            var parser = new Parser<ConfigViewModel>(Request.Form, _ConfigAppService.GetAll());
+            var result = parser.Parse();
+            return Ok(result);
+        }
+
+
+
 
         [HttpGet]
         [Route("history/{id:guid}")]

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AspNet.Security.OpenIdConnect.Primitives;
+using AspNetCoreRateLimit;
 using Equinox.API.Configurations;
 using Equinox.API.Filters;
 using Equinox.Infra.CrossCutting.Identity.Data;
@@ -182,11 +183,31 @@ namespace Equinox.API
             services.AddResponseCompression();
             services.AddMemoryCache();
 
+            //configure ip rate limiting middle-ware
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
+            //configure client rate limiting middleware
+            services.Configure<ClientRateLimitOptions>(Configuration.GetSection("ClientRateLimiting"));
+            services.Configure<ClientRateLimitPolicies>(Configuration.GetSection("ClientRateLimitPolicies"));
+            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
+            //services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
+            var opt = new ClientRateLimitOptions();
+            ConfigurationBinder.Bind(Configuration.GetSection("ClientRateLimiting"), opt);
+
             services.AddMvc()
-            .AddJsonOptions(options =>
-            {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            });
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ContractResolver
+                        = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+                });
+            //.AddJsonOptions(options =>
+            //{
+            //    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            //});
 
             services.AddSwaggerGen(c =>
             {
@@ -238,11 +259,12 @@ namespace Equinox.API
                               IHttpContextAccessor accessor)
         {
             app.UseCors(builder =>
-            {
-                builder.AllowAnyOrigin();
-                builder.AllowAnyMethod();
-                builder.WithHeaders("Authorization");
-            });
+            builder.WithOrigins("http://localhost:9000")
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                //.builder.WithHeaders("Authorization")
+                .AllowAnyMethod());
+
             loggerFactory.AddConsole();
              app.UseHsts();
              app.UseResponseCompression();
@@ -256,6 +278,10 @@ namespace Equinox.API
             app.UseStatusCodePagesWithReExecute("/error");
 
             app.UseAuthentication();
+            app.UseCookiePolicy();
+            app.UseIpRateLimiting();
+            app.UseClientRateLimiting();
+
             app.UseHttpsRedirection();
             app.UseMvcWithDefaultRoute();
 
