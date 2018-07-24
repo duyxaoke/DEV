@@ -1,6 +1,6 @@
 ﻿var sys = (function () {
     var Alert, Loading, HideLoading, CheckNull, CheckNumber, CheckExistAttribute, DeleteRow, FormatMoney,
-        UnFormatMoney, GetURLParameter, UrlDecode, FormatDate, GetMethod, PostMethod, PutMethod, DeleteMethod, SetCache, GetCache, RemoveCache;
+        UnFormatMoney, GetURLParameter, UrlDecode, FormatDate, SetCache, GetCache, RemoveCache;
 
     SetCache = function (key, value) {
         localStorage.setItem(key, JSON.stringify(value));
@@ -19,7 +19,7 @@
             "closeButton": true,
             "debug": false,
             "progressBar": true,
-            "positionClass": "toast-bottom-right",
+            "positionClass": "toast-top-right",
             "preventDuplicates": false,
             "onclick": null,
             "showDuration": 400,
@@ -31,7 +31,7 @@
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         }
-        var type = status === true ? "success" : "error";
+        var type = status === true ? "success" : "warning";
         toastr[type](text);
     };
     Loading = function () {
@@ -100,60 +100,7 @@
             $(elements).datepicker("setDate", new Date(from[2], from[1] - 1, from[0]));
         }
     }
-
-    //call ajax to get data
-    GetMethod = function (url, params) {
-        return $.ajax({
-            type: "Get",
-            url: urlApi + url,
-            dataType: "json",
-            data: params,
-            headers: {
-                'Authorization': "Bearer " + localPrincipal,
-                'Accept': 'application/json'
-            },
-        });
-    };
-    //call ajax to post data
-    PostMethod = function (url, params) {
-        return $.ajax({
-            'type': 'POST',
-            'url': urlApi + url,
-            'data': JSON.stringify(params),
-            'dataType': 'json',
-            headers: {
-                'Authorization': "Bearer " + localPrincipal,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        });
-    };
-    //call ajax to put data
-    PutMethod = function (url, params) {
-        return $.ajax({
-            type: "Put",
-            url: urlApi + url,
-            dataType: "json",
-            data: params,
-            headers: {
-                'Authorization': "Bearer " + localPrincipal,
-                'Accept': 'application/json'
-            },
-        });
-    };
-    //call ajax to delete data
-    DeleteMethod = function (url, params) {
-        return $.ajax({
-            type: "Delete",
-            url: urlApi + url,
-            dataType: "json",
-            data: params,
-            headers: {
-                'Authorization': "Bearer " + localPrincipal,
-                'Accept': 'application/json'
-            },
-        });
-    };
+    
     return {
         Alert: Alert,
         SetCache: SetCache,
@@ -170,9 +117,5 @@
         GetURLParameter: GetURLParameter,
         UrlDecode: UrlDecode,
         FormatDate: FormatDate,
-        GetMethod: GetMethod,
-        PostMethod: PostMethod,
-        PutMethod: PutMethod,
-        DeleteMethod: DeleteMethod
     };
 })();

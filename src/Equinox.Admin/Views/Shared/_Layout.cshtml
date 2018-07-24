@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="~/assets/stylesheets/custom.css">
     <!-- END THEME STYLES -->
 </head>
-<body>
+<body ng-app="MyApp">
     <!-- .app -->
     <div class="app">
         <!-- .app-header -->
@@ -74,14 +74,43 @@
         </main>
         <!-- /.app-main -->
     </div>
+    <!-- Alert Danger Modal -->
+    <div class="modal modal-alert fade" id="ExpiredModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="ExpiredLabel" aria-hidden="true">
+        <!-- .modal-dialog -->
+        <div class="modal-dialog" role="document">
+            <!-- .modal-content -->
+            <div class="modal-content">
+                <!-- .modal-header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fa fa-exclamation-triangle text-red mr-1"></i> Phiên làm viêc đã hết hạn
+                    </h5>
+                </div>
+                <!-- /.modal-header -->
+                <!-- .modal-body -->
+                <div class="modal-body">
+                    <p> Phiên làm việc của bạn đã hết hạn, vui lòng đăng nhập lại! </p>
+                </div>
+                <!-- /.modal-body -->
+                <!-- .modal-footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger">Đăng nhập lại</button>
+                </div>
+                <!-- /.modal-footer -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
     <!-- /.app -->
     <!-- BEGIN BASE JS -->
     <script src="~/assets/vendor/jquery/jquery.min.js"></script>
     <script src="~/assets/vendor/bootstrap/js/popper.min.js"></script>
     <script src="~/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
     <!-- FOR MODAL -->
-    <script src="~/assets/vendor/jquery/jquery-2.2.4.min.js"></script>
-    <script src="~/assets/vendor/bootstrap/js/bootstrap-3.3.6.min.js"></script>
+    @*<script src="~/assets/vendor/jquery/jquery-2.2.4.min.js"></script>
+        <script src="~/assets/vendor/bootstrap/js/bootstrap-3.3.6.min.js"></script>*@
 
     <!-- END BASE JS -->
     <!-- BEGIN PLUGINS JS -->
@@ -90,10 +119,18 @@
     <script src="~/assets/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="~/assets/vendor/datatables/dataTables.bootstrap4.min.js.js"></script>
     <script src="~/assets/vendor/toastr/toastr.min.js"></script>
+    <script src="~/assets/javascript/pages/bootbox.min.js"></script>
     <!-- END PLUGINS JS -->
     <!-- BEGIN THEME JS -->
     <script src="~/assets/javascript/main.min.js"></script>
     <script src="~/assets/javascript/site.js"></script>
+    <script src="~/assets/angular-1.6.3/angular.min.js"></script>
+    <script src="~/assets/javascript/helper.js"></script>
+    <!-- jQuery scripts -->
+    @*<script src="~/assets/vendor/jquery-validation/dist/jquery.validate.min.js"></script>*@
+
+    <!-- Angular scripts -->
+    @*<script src="~/assets/vendor/angular-validate-1.1.1/dist/angular-validate.min.js"></script>*@
     @if (User?.Identity?.IsAuthenticated ?? false)
     {
         <script>
@@ -140,6 +177,31 @@
 
         }(jQuery))
     </script>
+    <!--ANGULAR-->
+    <script>
+        var addController = function (name, controller) {
+            try {
+                MyApp.controller(name, controller);
+            } catch (e) {
+                console.log(JSON.stringify(e));
+            }
+        }
+        var addFactory = function (name, factory) {
+            try {
+                MyApp.factory(name, factory);
+            } catch (e) {
+                console.log(JSON.stringify(e));
+            }
+        }
+        //var lstDependency = [];
+        //lstDependency.push("ngRoute");
+        //lstDependency.push("angular.filter");
+        var MyApp = angular.module("MyApp", []);
+
+        addFactory("$localstorage", $localstorage);
+        addFactory("ApiHelper", ApiHelper);
+    </script>
+
     @RenderSection("scripts", required: false)
 </body>
 </html>

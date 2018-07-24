@@ -1,154 +1,302 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<!-- .card -->
-<section class="card">
-    <!-- floating action -->
-    <button href="@Url.Action("Add","Config")" data-toggle="modal" data-target="#modal-action" class="btn btn-success btn-floated">
-        <span class="fa fa-plus"></span>
-    </button>
-    <!-- /floating action -->
-    <!-- .card-body -->
-    <div class="card-body">
-        <fieldset>
-            <legend>@ViewData["Title"].</legend>
-            <table id="myTable" class="table table-hover"></table>
-
-        </fieldset>
+<div ng-controller="EditController" ng-cloak>
+    <!-- .card -->
+    <section class="card">
+        <!-- floating action -->
+        <button ng-click="Create()" class="btn btn-success btn-floated">
+            <span class="fa fa-plus"></span>
+        </button>
+        <!-- /floating action -->
+        <!-- .card-body -->
+        <div class="card-body">
+            <fieldset>
+                <legend>@ViewData["Title"].</legend>
+                <input ng-click="Update();" />
+                <table id="myTable" class="table table-hover"></table>
+            </fieldset>
+        </div>
+        <!-- /.card-body -->
+    </section>
+    <!-- Large modal -->
+    <div id="PnModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="PnModalLabel" aria-hidden="true">
+        <!-- .modal-dialog -->
+        <div class="modal-dialog" role="document">
+            <!-- .modal-content -->
+            <div class="modal-content">
+                <!-- .modal-header -->
+                <div class="modal-header">
+                    <h5 class="modal-title"> {{ UpdateMode ? "Cập nhật" : "Thêm mới" }} </h5>
+                </div>
+                <!-- /.modal-header -->
+                <!-- .modal-body -->
+                <!-- form .needs-validation -->
+                <form id="frmModal" name="frmModal" class="needs-validation" novalidate="">
+                    <!-- /form .needs-validation -->
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <label>
+                                Currency
+                                <abbr title="Required">*</abbr>
+                            </label>
+                            <input type="text" class="form-control" ng-model="Config.Currency" required="">
+                        </div>
+                        <div class="col-md-12">
+                            <label>
+                                Referal bonus
+                                <abbr title="Required">*</abbr>
+                            </label>
+                            <input type="text" class="form-control" ng-model="Config.ReferalBonus" required="">
+                        </div>
+                        <div class="col-md-12">
+                            <div class="custom-control custom-checkbox mt-3">
+                                <input type="checkbox" class="custom-control-input" id="SystemEnable" ng-model="Config.SystemEnable">
+                                <label class="custom-control-label" for="SystemEnable">System enable</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.modal-body -->
+                    <!-- .modal-footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" ng-click="Save()">{{ UpdateMode ? "Cập nhật" : "Thêm" }}</button>
+                    </div>
+                </form>
+                <!-- /.modal-footer -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.card-body -->
-</section>
+    <!-- /.modal -->
+
+</div>
+
 
 
 @section scripts{
+
     <script>
-        $(function () {
-            var peopleList = $('#myTable').DataTable({
-                serverSide: true,
-                processing: true,
-                language: {
-                    paginate: {
-                        previous: '<i class="fa fa-lg fa-angle-left"></i>',
-                        next: '<i class="fa fa-lg fa-angle-right"></i>'
-                    }
-                },
-                ajax: {
-                    url: urlApi + "Config/pageData",
-                    type: 'POST',
-                    beforeSend: function (request) {
-                        request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
-                    }
-                },
-                columnDefs: [
-                    {
-                        targets: 2,
-                       width: "150px",
-                    render: function render(data, type, row, meta) {
-                        return '<a class="btn btn-sm btn-secondary" href="#' + data + '"><i class="fa fa-pencil-alt"></i></a>\n          <a class="btn btn-sm btn-secondary" href="#' + data + '"><i class="far fa-trash-alt"></i></a>';
-                    }
-                }],
-                columns: [
-                    { data: "Currency", name: "Currency", title: "Currency", className: 'align-middle', orderable: false, searchable: false },
-                    { data: "ReferalBonus", name: "ReferalBonus", className: 'align-middle', title: "Referal bonus (%)" },
-                    { data: 'Id', className: 'align-middle text-center', title: "Action", orderable: false, searchable: false }
-                ]
+
+        var EditController = ($scope, $rootScope, $timeout, $filter, ApiHelper, $q) => {
+
+            $(function () {
+                var peopleList = $('#myTable').DataTable({
+                    serverSide: true,
+                    processing: true,
+                    language: {
+                        paginate: {
+                            previous: '<i class="fa fa-lg fa-angle-left"></i>',
+                            next: '<i class="fa fa-lg fa-angle-right"></i>'
+                        }
+                    },
+                    ajax: {
+                        url: urlApi + "Config/pageData",
+                        type: 'POST',
+                        beforeSend: function (request) {
+                            request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
+                        }
+                    },
+                    columnDefs: [
+                        {
+                            targets: 2,
+                            width: "150px",
+                            render: function render(data, type, row, meta) {
+                                return `<a class="btn btn-sm btn-secondary" href="javascript:void(0)" ng-click="Update();"><i class="fa fa-pencil-alt"></i></a>\n
+                                        <a class="btn btn-sm btn-secondary" href="javascript:void(0)" ng-click="Delete('` + data + `');"><i class="far fa-trash-alt"></i></a>`;
+                            }
+                        }],
+                    columns: [
+                        { data: "Currency", name: "Currency", title: "Currency", className: 'align-middle', orderable: false, searchable: false },
+                        { data: "ReferalBonus", name: "ReferalBonus", className: 'align-middle', title: "Referal bonus (%)" },
+                        { data: 'Id', className: 'align-middle text-center', title: "Action", orderable: false, searchable: false }
+                    ]
+                });
             });
-        });
 
-                    //$(document).ready(function () {
 
-                    //    $("#myTable").DataTable({
+            //#region declare variable
+            $scope.UpdateMode = false;
+            $scope.Config = {};
+            //#endregion
 
-                    //        "processing": true, // for show progress bar
-                    //        "serverSide": true, // for process server side
-                    //        "filter": true, // this is for disable filter (search box)
-                    //        "orderMulti": false, // for disable multiple column at once
-                    //        "pageLength": 10,
+            //#region ReadById
+            var ReadById = (Id) => {
+                let defer = $q.defer();
+                let strApiEndPoint = "Config/" + Id;
+                ApiHelper.GetMethod(strApiEndPoint)
+                    .then(function (response) {
+                        $scope.Config = response.Data.data;
+                        defer.resolve(response);
+                    })
+                    .catch(function (response) {
+                        defer.reject(response);
+                        $rootScope.MasterPage.IsLoading = false;
+                    });
+                return defer.promise;
+            };
+            //#endregion
 
-                    //        "ajax": {
-                    //            'url': "http://localhost:50000/api/" + "Config/pageData",
-                    //            'type': 'POST',
-                    //            'beforeSend': function (request) {
-                    //                request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
-                    //            },
-                    //            'data': function (data) { return data = JSON.stringify(data); }
-                    //        },
+            //#region Create
+            $scope.Create = function () {
+                $scope.UpdateMode = false;
+                $scope.Config = {};
+                $('#PnModal').modal('show');
+            };
+            //#endregion
 
-                    //        "columnDefs":
-                    //            [
-                    //                {
-                    //                    "targets": [0],
-                    //                    "visible": false,
-                    //                    "searchable": false
-                    //                }
-                    //            ],
+            //#region Update
+            $scope.Update = function () {
+                $scope.UpdateMode = true;
+                let Id = "a719ae85-367e-4f8d-afcb-9a0d5a8d7b81";
+                ReadById(Id);
+                $('#PnModal').modal('show');
+            }
+            //#endregion
 
-                    //        "columns": [
-                    //            { "data": "Id", "name": "Currency", "autoWidth": true },
-                    //            { "data": "Currency", "title": "tientes", "name": "Currency", "autoWidth": true },
-                    //            {
-                    //                "render": function (data, type, full, meta) {
-                    //                    return '<a class="btn btn-info" href="/Demo/Edit/' + full.Id + '">Edit</a>';
-                    //                }
-                    //            },
-                    //            {
-                    //                data: null, render: function (data, type, row) {
-                    //                    return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.Id + "'); >Delete</a>";
-                    //                }
-                    //            },
+            //#region Delete
+            $scope.Delete = function (Id) {
+                bootbox.confirm("Xác nhận xóa?",
+                    function (result) {
+                        if (result) {
+                            let strApiEndPoint = Id;
+                            ApiHelper.DeleteMethod(strApiEndPoint)
+                                .then(function (response) {
+                                    sys.Alert(true, 'Xóa thành công!');
+                                })
+                                .catch(function (response) {
+                                    sys.Alert(true, 'Xóa thất bại!');
+                                });
+                        }
+                    });
+            };
+            //#endregion
 
-                    //        ]
+            //#region Save
+            $scope.Save = function () {
+                if (!$scope.UpdateMode) {
+                    let strApiEndPoint = "Config/Create";
+                    ApiHelper.PostMethod(strApiEndPoint, $scope.Config)
+                        .then(function (response) {
+                            sys.Alert(true, 'Thêm thành công');
+                        })
+                        .catch(function (response) {
+                            sys.Alert(false, 'Thêm thất bại');
+                        });
+                    $('#PnModal').modal('hide');
+                }
+                else {
+                    let strApiEndPoint = "Config/Update";
+                    ApiHelper.PutMethod(strApiEndPoint, $scope.Config)
+                        .then(function (response) {
+                            sys.Alert(true, 'Cập nhật thành công');
+                        })
+                        .catch(function (response) {
+                            sys.Alert(false, 'Cập nhật thất bại');
+                        });
+                    $('#PnModal').modal('hide');
+                }
+            };
+            //#endregion
+        }
+            EditController.$inject = ["$scope", "$rootScope", "$timeout", "$filter", "ApiHelper", "$q"];
+            addController("EditController", EditController);
 
-                    //    });
-                    //});
 
-                        //$(document).ready(function () {
-                        //    var oTable = $('#datatab').DataTable({
-                        //        "serverSide": true,
-                        //        "ajax": {
-                        //            'url': "http://localhost:50000/api/" + "Config/pageData",
-                        //            'type': 'POST',
-                        //            'beforeSend': function (request) {
-                        //                request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
-                        //            },
-                        //            'data': function (data) { return data = JSON.stringify(data); }
-                        //        },
-                        //        "dom": 'frtiS',
-                        //        "scroller": {
-                        //            loadingIndicator: false
-                        //        },
-                        //        "processing": true,
-                        //        "paging": true,
-                        //        "deferRender": true,
-                        //        "columns": [
-                        //            { "data": "Id" },
-                        //            { "data": "Currency" }
-                        //        ],
-                        //        "order": [0, "asc"]
 
-                        //    });
+                                                //$(document).ready(function () {
 
-                        //    oTable.columns().every(function () {
-                        //        var that = this;
+                                                //    $("#myTable").DataTable({
 
-                        //        $('input', this.footer()).on('keyup change', function () {
-                        //            that
-                        //                .search(this.value)
-                        //                .draw();
-                        //        });
-                        //    });
+                                                //        "processing": true, // for show progress bar
+                                                //        "serverSide": true, // for process server side
+                                                //        "filter": true, // this is for disable filter (search box)
+                                                //        "orderMulti": false, // for disable multiple column at once
+                                                //        "pageLength": 10,
 
-                        //});
-                        //var baseUrl = 'config/list';
-                        //$.when(sys.GetMethod(baseUrl))
-                        //    .done(function (response) {
-                        //        alert(response);
-                        //    })
-                        //    .fail(function (error) {
-                        //        alert(error);
-                        //    });
+                                                //        "ajax": {
+                                                //            'url': "http://localhost:50000/api/" + "Config/pageData",
+                                                //            'type': 'POST',
+                                                //            'beforeSend': function (request) {
+                                                //                request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
+                                                //            },
+                                                //            'data': function (data) { return data = JSON.stringify(data); }
+                                                //        },
+
+                                                //        "columnDefs":
+                                                //            [
+                                                //                {
+                                                //                    "targets": [0],
+                                                //                    "visible": false,
+                                                //                    "searchable": false
+                                                //                }
+                                                //            ],
+
+                                                //        "columns": [
+                                                //            { "data": "Id", "name": "Currency", "autoWidth": true },
+                                                //            { "data": "Currency", "title": "tientes", "name": "Currency", "autoWidth": true },
+                                                //            {
+                                                //                "render": function (data, type, full, meta) {
+                                                //                    return '<a class="btn btn-info" href="/Demo/Edit/' + full.Id + '">Edit</a>';
+                                                //                }
+                                                //            },
+                                                //            {
+                                                //                data: null, render: function (data, type, row) {
+                                                //                    return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.Id + "'); >Delete</a>";
+                                                //                }
+                                                //            },
+
+                                                //        ]
+
+                                                //    });
+                                                //});
+
+                                                    //$(document).ready(function () {
+                                                    //    var oTable = $('#datatab').DataTable({
+                                                    //        "serverSide": true,
+                                                    //        "ajax": {
+                                                    //            'url': "http://localhost:50000/api/" + "Config/pageData",
+                                                    //            'type': 'POST',
+                                                    //            'beforeSend': function (request) {
+                                                    //                request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
+                                                    //            },
+                                                    //            'data': function (data) { return data = JSON.stringify(data); }
+                                                    //        },
+                                                    //        "dom": 'frtiS',
+                                                    //        "scroller": {
+                                                    //            loadingIndicator: false
+                                                    //        },
+                                                    //        "processing": true,
+                                                    //        "paging": true,
+                                                    //        "deferRender": true,
+                                                    //        "columns": [
+                                                    //            { "data": "Id" },
+                                                    //            { "data": "Currency" }
+                                                    //        ],
+                                                    //        "order": [0, "asc"]
+
+                                                    //    });
+
+                                                    //    oTable.columns().every(function () {
+                                                    //        var that = this;
+
+                                                    //        $('input', this.footer()).on('keyup change', function () {
+                                                    //            that
+                                                    //                .search(this.value)
+                                                    //                .draw();
+                                                    //        });
+                                                    //    });
+
+                                                    //});
+                                                    //var baseUrl = 'config/list';
+                                                    //$.when(sys.GetMethod(baseUrl))
+                                                    //    .done(function (response) {
+                                                    //        alert(response);
+                                                    //    })
+                                                    //    .fail(function (error) {
+                                                    //        alert(error);
+                                                    //    });
     </script>
 }

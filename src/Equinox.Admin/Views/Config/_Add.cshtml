@@ -34,24 +34,33 @@
     @Html.Partial("_ModalFooter", new ModalFooter { })
 </form>
 <script>
-   $("form").submit(function (event) {
-       event.preventDefault();
-       let data = $(this).serializeFormJSON();
-       var obj = new Object();
-       obj.Currency = "VND";
-       obj.ReferalBonus = "1";
-       obj.SystemEnable = false;
-       console.log(data);
+    var EditController = ($scope, $rootScope, $timeout, $filter, ApiHelper, $q) => {
+        $("form").submit(function (event) {
+            event.preventDefault();
+            let defer = $q.defer();
+            let data = $(this).serializeFormJSON();
+            var obj = new Object();
+            obj.Currency = "VND";
+            obj.ReferalBonus = "1";
+            obj.SystemEnable = false;
+            console.log(data);
+            let strApiEndPoint = 'Config/create';
+            ApiHelper.PostMethod(strApiEndPoint, obj)
+                .then(function (response) {
+                    $('#modal-action').modal('hide');
+                    sys.Alert(response.status, 'Tạo thành công!');
+                    $('#myTable').DataTable().ajax.reload(null, false);
+                    defer.resolve(response);
+                })
+                .catch(function (response) {
+                    defer.reject(response);
+                });
+            return defer.promise;
 
-       
-       $.when(sys.PostMethod('Config/create', obj))
-            .done(function (response) {
-                $('#modal-action').modal('hide');
-                sys.Alert(response.status, 'Tạo thành công!');
-                $('#myTable').DataTable().ajax.reload(null, false);
-            })
-           .fail(function (error) {
-               sys.Alert(false, error);
-            });
-    });
+       });
+
+    }
+    EditController.$inject = ["$scope", "$rootScope", "$timeout", "$filter", "ApiHelper", "$q"];
+    addController("EditController", EditController);
+
 </script>
