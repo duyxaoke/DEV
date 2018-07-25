@@ -37,23 +37,36 @@
                     <div class="modal-body">
                         <div class="col-md-12">
                             <label>
-                                Currency
+                                Code
                                 <abbr title="Required">*</abbr>
                             </label>
 
-                            <input type="text" class="form-control" ng-model="Config.Currency" required="">
+                            <input type="text" class="form-control" ng-model="Currency.Code" required="">
                         </div>
                         <div class="col-md-12">
                             <label>
-                                Referal bonus
+                                Address
+                            </label>
+                            <input type="text" class="form-control" ng-model="Currency.Address">
+                        </div>
+                        <div class="col-md-12">
+                            <label>
+                                Name
                                 <abbr title="Required">*</abbr>
                             </label>
-                            <input type="text" class="form-control" ng-model="Config.ReferalBonus" required="">
+                            <input type="text" class="form-control" ng-model="Currency.Name" required="">
+                        </div>
+                        <div class="col-md-12">
+                            <label>
+                                Quantity
+                                <abbr title="Required">*</abbr>
+                            </label>
+                            <input type="number" class="form-control" ng-model="Currency.Quantity" required="">
                         </div>
                         <div class="col-md-12">
                             <div class="custom-control custom-checkbox mt-3">
-                                <input type="checkbox" class="custom-control-input" id="SystemEnable" ng-model="Config.SystemEnable">
-                                <label class="custom-control-label" for="SystemEnable">System enable</label>
+                                <input type="checkbox" class="custom-control-input" id="IsActive" ng-model="Currency.IsActive">
+                                <label class="custom-control-label" for="IsActive">Active</label>
                             </div>
                         </div>
                     </div>
@@ -79,7 +92,7 @@
 
             //#region declare variable
             $scope.UpdateMode = false;
-            $scope.Config = {};
+            $scope.Currency = {};
             //#endregion
 
             //#region Datatable
@@ -94,7 +107,7 @@
                         }
                     },
                     ajax: {
-                        url: urlApi + CommonHelper.ConfigsUrl + "pageData",
+                        url: urlApi + CommonHelper.CurrencysUrl + "pageData",
                         type: 'POST',
                         beforeSend: function (request) {
                             request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
@@ -106,17 +119,20 @@
                         }
                     },
                     columns: [
-                        { data: "Currency", name: "Currency", title: "Currency", className: 'align-middle', orderable: false, searchable: false },
-                        { data: "ReferalBonus", name: "ReferalBonus", className: 'align-middle', title: "Referal bonus (%)" },
+                        { data: "Code", name: "Code", title: "Code", className: 'align-middle'},
+                        { data: "Name", name: "Name", title: "Name", className: 'align-middle'},
+                        { data: "Address", name: "Address", title: "Address", className: 'align-middle'},
+                        { data: "Quantity", name: "Quantity", title: "Quantity",className: 'align-middle'},
+                        { data: "IsActive", name: "IsActive", title: "Active", className: 'align-middle', orderable: false, searchable: false},
                         { data: 'Id', className: 'align-middle text-center', title: "Action", orderable: false, searchable: false }
                     ],
                     columnDefs: [
                         {
-                            targets: 2,
+                            targets: 5,
                             width: "150px",
                             render: function render(data, type, row, meta) {
                                 return `<a class="btn btn-sm btn-secondary" href="javascript:void(0)" ng-click="Update('` + data + `');"><i class="fa fa-pencil-alt"></i></a>\n
-                                                <a class="btn btn-sm btn-secondary" href="javascript:void(0)" ng-click="Delete('` + data + `');"><i class="far fa-trash-alt"></i></a>`;
+                                                    <a class="btn btn-sm btn-secondary" href="javascript:void(0)" ng-click="Delete('` + data + `');"><i class="far fa-trash-alt"></i></a>`;
                             }
                         }],
                     createdRow: function (row, data, dataIndex) {
@@ -129,10 +145,10 @@
             //#region ReadById
             var ReadById = (Id) => {
                 let defer = $q.defer();
-                let strApiEndPoint = CommonHelper.ConfigsUrl + Id;
+                let strApiEndPoint = CommonHelper.CurrencysUrl + Id;
                 ApiHelper.GetMethod(strApiEndPoint)
                     .then(function (response) {
-                        $scope.Config = response.data;
+                        $scope.Currency = response.data;
                         defer.resolve(response);
                     }).catch(function (response) { });
                 return defer.promise;
@@ -142,7 +158,7 @@
             //#region Create
             $scope.Create = function () {
                 $scope.UpdateMode = false;
-                $scope.Config = {};
+                $scope.Currency = {};
                 $('#PnModal').modal('show');
             };
             //#endregion
@@ -162,7 +178,7 @@
                     message: "Xác nhận xóa?",
                     callback: function (result) {
                         if (result) {
-                            let strApiEndPoint = CommonHelper.ConfigsUrl + "?id=" + Id;
+                            let strApiEndPoint = CommonHelper.CurrencysUrl + "?id=" + Id;
                             ApiHelper.DeleteMethod(strApiEndPoint)
                                 .then(function (response) {
                                     $('#myTable').DataTable().ajax.reload(null, false);
@@ -177,8 +193,8 @@
             //#region Save
             $scope.Save = function () {
                 if (!$scope.UpdateMode) {
-                    let strApiEndPoint = CommonHelper.ConfigsUrl + "Create";
-                    ApiHelper.PostMethod(strApiEndPoint, $scope.Config)
+                    let strApiEndPoint = CommonHelper.CurrencysUrl + "Create";
+                    ApiHelper.PostMethod(strApiEndPoint, $scope.Currency)
                         .then(function (response) {
                             $('#myTable').DataTable().ajax.reload(null, false);
                             sys.Alert(true, 'Thêm thành công');
@@ -187,8 +203,8 @@
                     $('#PnModal').modal('hide');
                 }
                 else {
-                    let strApiEndPoint = CommonHelper.ConfigsUrl + "Update";
-                    ApiHelper.PutMethod(strApiEndPoint, $scope.Config)
+                    let strApiEndPoint = CommonHelper.CurrencysUrl + "Update";
+                    ApiHelper.PutMethod(strApiEndPoint, $scope.Currency)
                         .then(function (response) {
                             $('#myTable').DataTable().ajax.reload(null, false);
                             sys.Alert(true, 'Cập nhật thành công');

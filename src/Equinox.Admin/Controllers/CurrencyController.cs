@@ -12,9 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace Equinox.Admin.Controllers
 {
     [Authorize]
-    public class ConfigController : BaseController
+    public class CurrencyController : BaseController
     {
-        public ConfigController(INotificationHandler<DomainNotification> notifications) : base(notifications)
+        public CurrencyController(INotificationHandler<DomainNotification> notifications) : base(notifications)
         {
         }
 

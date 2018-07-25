@@ -125,7 +125,8 @@
     <script src="~/assets/javascript/main.min.js"></script>
     <script src="~/assets/javascript/site.js"></script>
     <script src="~/assets/angular-1.6.3/angular.min.js"></script>
-    <script src="~/assets/javascript/helper.js"></script>
+    <script src="~/assets/javascript/ApiHelper.js"></script>
+    <script src="~/assets/javascript/CommonHelper.js"></script>
     <!-- jQuery scripts -->
     @*<script src="~/assets/vendor/jquery-validation/dist/jquery.validate.min.js"></script>*@
 
@@ -200,6 +201,7 @@
 
         addFactory("$localstorage", $localstorage);
         addFactory("ApiHelper", ApiHelper);
+        addFactory("CommonHelper", CommonHelper);
     </script>
 
     @RenderSection("scripts", required: false)

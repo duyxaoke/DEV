@@ -127,7 +127,9 @@ namespace Equinox.API
                     // can enable the other flows if you need to support implicit or client credentials.
                     options.AllowAuthorizationCodeFlow()
                            .AllowPasswordFlow()
-                           .AllowRefreshTokenFlow();
+                           .AllowRefreshTokenFlow()
+                           .SetAccessTokenLifetime(TimeSpan.FromMinutes(30))
+                           .SetRefreshTokenLifetime(TimeSpan.FromMinutes(20160));
 
                     // Mark the "email", "profile" and "roles" scopes as supported scopes.
                     options.RegisterScopes(OpenIdConnectConstants.Scopes.Email,

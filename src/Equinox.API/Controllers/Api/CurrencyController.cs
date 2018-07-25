@@ -1,4 +1,5 @@
 using System;
+using Equinox.API.Helpers;
 using Equinox.Application.Interfaces;
 using Equinox.Application.ViewModels;
 using Equinox.Domain.Core.Bus;
@@ -6,10 +7,11 @@ using Equinox.Domain.Core.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation;
 
 namespace Equinox.API.Controllers.Api
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationDefaults.AuthenticationScheme)]
     public class CurrencyController : ApiController
     {
         private readonly ICurrencyAppService _CurrencyAppService;
@@ -23,16 +25,14 @@ namespace Equinox.API.Controllers.Api
         }
 
         [HttpGet]
-        [AllowAnonymous]
-        [Route("currency/list")]
+        [Route("list")]
         public IActionResult Get()
         {
             return Response(_CurrencyAppService.GetAll());
         }
 
         [HttpGet]
-        [AllowAnonymous]
-        [Route("currency/{id:guid}")]
+        [Route("{id:guid}")]
         public IActionResult Get(Guid id)
         {
             var CurrencyViewModel = _CurrencyAppService.GetById(id);
@@ -41,7 +41,7 @@ namespace Equinox.API.Controllers.Api
         }
 
         [HttpPost]
-        [Route("currency/create")]
+        [Route("create")]
         public IActionResult Post([FromBody]CurrencyViewModel CurrencyViewModel)
         {
             if (!ModelState.IsValid)
@@ -56,7 +56,7 @@ namespace Equinox.API.Controllers.Api
         }
 
         [HttpPut]
-        [Route("currency/update")]
+        [Route("update")]
         public IActionResult Put([FromBody]CurrencyViewModel CurrencyViewModel)
         {
             if (!ModelState.IsValid)
@@ -71,17 +71,22 @@ namespace Equinox.API.Controllers.Api
         }
 
         [HttpDelete]
-        [Route("currency/delete")]
         public IActionResult Delete(Guid id)
         {
             _CurrencyAppService.Remove(id);
 
             return Response();
         }
-
+        [HttpPost]
+        [Route("pageData")]
+        public IActionResult Data()
+        {
+            var parser = new Parser<CurrencyViewModel>(Request.Form, _CurrencyAppService.GetAll());
+            var result = parser.Parse();
+            return Ok(result);
+        }
         [HttpGet]
-        [AllowAnonymous]
-        [Route("currency/history/{id:guid}")]
+        [Route("history/{id:guid}")]
         public IActionResult History(Guid id)
         {
             var CurrencyHistoryData = _CurrencyAppService.GetAllHistory(id);

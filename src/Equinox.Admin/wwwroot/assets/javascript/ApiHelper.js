@@ -83,21 +83,27 @@ var ApiHelper = function ($rootScope, $localstorage, $timeout, $q, $http) {
         Info: "Info"
     };
 
+    service.Status = {
+        CreateSuccess: "Tạo thành công!",
+        CreateFail: "Tạo thất bại!",
+        UpdateSuccess: "Cập nhật thành công!",
+        UpdateFail: "Cập nhật thất bại!",
+        DeleteSuccess: "Xóa thành công!",
+        DeleteFail: "Xóa thất bại!"
+    };
+
     service.GetMethod = function (url, data, config) {
         let defer = $q.defer();
-
-        let codeStep = jQuery.extend({}, ApiHelper.CodeStep);
-
         if (!service.CheckToken()) {
             $rootScope.MasterPage.IsLoading = false;
-            defer.reject(codeStep);
+            defer.reject(data);
             return defer.promise;
         };
 
         if (config && config.CacheKeyClient && service.CheckCacheExist(config.CacheKeyClient)) {
             let response = {};
             response.Data = service.GetCache(config.CacheKeyClient);
-            defer.resolve(response);
+            defer.resolve(jqXHR.data);
             return defer.promise;
         }
 
@@ -109,37 +115,32 @@ var ApiHelper = function ($rootScope, $localstorage, $timeout, $q, $http) {
                 'Accept': 'application/json'
             },
             data: data
+
         }
         $http(req).then(function (jqXHR) {
-            if (jqXHR.status == 204) {
-                codeStep = service.SetErrorAPI(jqXHR, url, data);
-                defer.reject(codeStep);
-            } else {
-                codeStep.Status = service.JsonStatusCode.Success;
-                codeStep.Data = jqXHR.data;
-
-                config && config.CacheKeyClient && service.AddCache(config.CacheKeyClient, codeStep.Data);
-
-                defer.resolve(codeStep);
-            }
+            defer.resolve(jqXHR.data);
         }, function (jqXHR) {
-            codeStep = service.SetErrorAPI(jqXHR, url, data);
-            defer.reject(codeStep);
+            if (jqXHR.status === 401) {
+                service.ConfirmRedirectLogin();
+            }
+            if (!jqXHR.data.success) {
+                if (jQuery.type(jqXHR.data.errors) == "array") {
+                    var errorMessage = jqXHR.data.errors.join("</br>");
+                    sys.Alert(jqXHR.data.success, errorMessage);
+                }
+                defer.reject(jqXHR);
+            }
         });
         return defer.promise;
     };
 
     service.PostMethod = function (url, data, CacheKey) {
-
-        let codeStep = jQuery.extend({}, ApiHelper.CodeStep);
         let defer = $q.defer();
-
         if (!service.CheckToken()) {
             $rootScope.MasterPage.IsLoading = false;
-            defer.reject(codeStep);
+            defer.reject(data);
             return defer.promise;
         };
-
         var req = {
             method: 'POST',
             url: urlApi + url,
@@ -150,28 +151,28 @@ var ApiHelper = function ($rootScope, $localstorage, $timeout, $q, $http) {
             data: data
         }
         $http(req).then(function (jqXHR) {
-            if (jqXHR.status == 204) {
-                codeStep = service.SetErrorAPI(jqXHR, url, data);
-                defer.reject(codeStep);
-            } else {
-                codeStep.Status = service.JsonStatusCode.Success;
-                codeStep.Data = jqXHR.data;
-                defer.resolve(codeStep);
-            }
+            defer.resolve(jqXHR.data);
         }, function (jqXHR) {
-            codeStep = service.SetErrorAPI(jqXHR, url, data);
-            defer.reject(codeStep);
+            if (jqXHR.status === 401) {
+                service.ConfirmRedirectLogin();
+            }
+            if (!jqXHR.data.success) {
+                if (jQuery.type(jqXHR.data.errors) == "array") {
+                    var errorMessage = jqXHR.data.errors.join("</br>");
+                    sys.Alert(jqXHR.data.success, errorMessage);
+                }
+                defer.reject(jqXHR);
+            }
         });
         return defer.promise;
     };
 
     service.PutMethod = function (url, data, CacheKey) {
 
-        let codeStep = jQuery.extend({}, ApiHelper.CodeStep);
         let defer = $q.defer();
         if (!service.CheckToken()) {
             $rootScope.MasterPage.IsLoading = false;
-            defer.reject(codeStep);
+            defer.reject(data);
             return defer.promise;
         };
 
@@ -185,29 +186,27 @@ var ApiHelper = function ($rootScope, $localstorage, $timeout, $q, $http) {
             data: data
         }
         $http(req).then(function (jqXHR) {
-            if (jqXHR.status == 204) {
-                codeStep = service.SetErrorAPI(jqXHR, url, data);
-                defer.reject(codeStep);
-            } else {
-                codeStep.Status = service.JsonStatusCode.Success;
-                codeStep.Data = jqXHR.data;
-                defer.resolve(codeStep);
-            }
+            defer.resolve(jqXHR.data);
         }, function (jqXHR) {
-            codeStep = service.SetErrorAPI(jqXHR, url, data);
-            defer.reject(codeStep);
+            if (jqXHR.status === 401) {
+                service.ConfirmRedirectLogin();
+            }
+            if (!jqXHR.data.success) {
+                if (jQuery.type(jqXHR.data.errors) == "array") {
+                    var errorMessage = jqXHR.data.errors.join("</br>");
+                    sys.Alert(jqXHR.data.success, errorMessage);
+                }
+                defer.reject(jqXHR.data);
+            }
         });
         return defer.promise;
     };
 
     service.DeleteMethod = function (url, data, CacheKey) {
-
-        let codeStep = jQuery.extend({}, ApiHelper.CodeStep);
         let defer = $q.defer();
-
         if (!service.CheckToken()) {
             $rootScope.MasterPage.IsLoading = false;
-            defer.reject(codeStep);
+            defer.reject(data);
             return defer.promise;
         };
 
@@ -221,72 +220,22 @@ var ApiHelper = function ($rootScope, $localstorage, $timeout, $q, $http) {
             data: data
         }
         $http(req).then(function (jqXHR) {
-            if (jqXHR.status == 204) {
-                codeStep = service.SetErrorAPI(jqXHR, url, data);
-                defer.reject(codeStep);
-            } else {
-                codeStep.Status = service.JsonStatusCode.Success;
-                codeStep.Data = jqXHR.data;
-                defer.resolve(codeStep);
-            }
+            defer.resolve(jqXHR.data);
         }, function (jqXHR) {
-            codeStep = service.SetErrorAPI(jqXHR, url, data);
-            defer.reject(codeStep);
+            if (!jqXHR.data.success) {
+                if (jqXHR.status === 401) {
+                    service.ConfirmRedirectLogin();
+                }
+                if (jQuery.type(jqXHR.data.errors) == "array") {
+                    var errorMessage = jqXHR.data.errors.join("</br>");
+                    sys.Alert(jqXHR.data.success, errorMessage);
+                }
+                defer.reject(jqXHR);
+            }
         });
         return defer.promise;
+
     };
-
-    service.PostPromise = function (url, Method, data, SuccessCallback, ErrorCallback) {
-        var q = $q.defer();
-        $http({
-            method: Method,
-            url: urlApi + url,
-            data: data
-        }).then(function SuccessResolve(response) {
-            if (SuccessCallback) {
-                SuccessCallback(response);
-            }
-            q.resolve(response);
-        }, function ErrorReject(response) {
-            if (ErrorCallback) {
-                ErrorCallback(response);
-            }
-            q.reject(response);
-
-        });
-        return q.promise;
-    };
-
-    service.SetErrorAPI = function (jqXHR, ApiEndPoint) {
-        var codeStep = jQuery.extend({}, service.CodeStep);
-        if (jqXHR.status == 200 || jqXHR.status == 201) return;
-        codeStep.Status = service.JsonStatusCode.Error;
-        codeStep.StatusCode = jqXHR.status;
-        codeStep.ErrorStep = "API error " + jqXHR.status + ", ApiEndPoint:" + ApiEndPoint;
-        switch (jqXHR.status) {
-            case 406:
-                var errorLst = jqXHR.data;
-                codeStep.Status = service.JsonStatusCode.Warning;
-                codeStep.Message = errorLst;
-                if (jQuery.type(errorLst) == "array") {
-                    codeStep.Message = errorLst.join("</br>");
-                }
-                break;
-            case 500:
-                //var errorLst = jqXHR.data;
-                codeStep.ErrorMessage = jqXHR.data;
-                codeStep.Message = service.StatusCodeMessage(jqXHR.status);
-                break;
-            case 204:
-                codeStep.Message = "Không có dữ liệu hoặc bạn không có quyền xem dữ liệu";
-                codeStep.Status = service.JsonStatusCode.Warning;
-                break;
-            default:
-                codeStep.Message = service.StatusCodeMessage(jqXHR.status);
-                break;
-        }
-        return codeStep;
-    }
 
     service.StatusCodeMessage = function (status) {
         var strMessage = '';
@@ -384,13 +333,14 @@ var ApiHelper = function ($rootScope, $localstorage, $timeout, $q, $http) {
             return;
         }
         $rootScope.IsShowConfirmRedirectLogin = true;
-        jConfirm('Thông báo', 'Phiên đăng nhập hết hạn, bạn vui lòng đăng nhập lại?', function (isOK) {
-            if (!isOK) {
-                return;
+        bootbox.alert({
+            title: "Thông báo",
+            message: "Phiên làm việc đã hết hạn, vui lòng đăng nhập lại…",
+            callback: function (result) {
+                $rootScope.IsShowConfirmRedirectLogin = false;
+                window.location.href = "/signout";
             }
-            $rootScope.IsShowConfirmRedirectLogin = false;
-            window.location.href = "/Accounts/Logout";
-        });
+        })
     }
 
     return service;
