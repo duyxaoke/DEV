@@ -5,7 +5,7 @@ namespace Equinox.Domain.Commands
 {
     public class UpdateTransactionCommand : TransactionCommand
     {
-        public UpdateTransactionCommand(Guid id, Guid userId, int depWithType, decimal? quantity, string iP, bool approve, DateTime createdDate, DateTime updatedDate)
+        public UpdateTransactionCommand(Guid id, string userId, int depWithType, decimal? quantity, string iP, int approve, DateTime createdDate, DateTime updatedDate)
         {
             Id = id;
             UserId = userId;

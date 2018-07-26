@@ -9,6 +9,7 @@ using Equinox.Domain.Commands;
 using Equinox.Domain.Core.Bus;
 using Equinox.Domain.Interfaces;
 using Equinox.Infra.Data.Repository.EventSourcing;
+using System.Linq;
 
 namespace Equinox.Application.Services
 {

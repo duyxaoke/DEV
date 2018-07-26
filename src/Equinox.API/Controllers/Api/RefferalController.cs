@@ -6,10 +6,11 @@ using Equinox.Domain.Core.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation;
 
 namespace Equinox.API.Controllers.Api
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationDefaults.AuthenticationScheme)]
     public class RefferalController : ApiController
     {
         private readonly IRefferalAppService _RefferalAppService;
@@ -24,7 +25,7 @@ namespace Equinox.API.Controllers.Api
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("refferal/list")]
+        [Route("list")]
         public IActionResult Get()
         {
             return Response(_RefferalAppService.GetAll());
@@ -32,7 +33,7 @@ namespace Equinox.API.Controllers.Api
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("refferal/GetById/{id:guid}")]
+        [Route("GetById/{id:guid}")]
         public IActionResult GetById(Guid id)
         {
             var RefferalViewModel = _RefferalAppService.GetById(id);
@@ -42,7 +43,7 @@ namespace Equinox.API.Controllers.Api
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("refferal/GetByUser/{userId:guid}")]
+        [Route("GetByUser/{userId:guid}")]
         public IActionResult GetByUser(Guid userId)
         {
             var RefferalViewModel = _RefferalAppService.GetByUser(userId);
@@ -50,7 +51,7 @@ namespace Equinox.API.Controllers.Api
         }
 
         [HttpPost]
-        [Route("refferal/create")]
+        [Route("create")]
         public IActionResult Post([FromBody]RefferalViewModel RefferalViewModel)
         {
             if (!ModelState.IsValid)
@@ -65,7 +66,7 @@ namespace Equinox.API.Controllers.Api
         }
 
         [HttpDelete]
-        [Route("refferal/delete")]
+        [Route("delete")]
         public IActionResult Delete(Guid id)
         {
             _RefferalAppService.Remove(id);
@@ -75,7 +76,7 @@ namespace Equinox.API.Controllers.Api
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("refferal/history/{id:guid}")]
+        [Route("history/{id:guid}")]
         public IActionResult History(Guid id)
         {
             var RefferalHistoryData = _RefferalAppService.GetAllHistory(id);

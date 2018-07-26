@@ -1,9 +1,18 @@
 ﻿var CommonHelper = function ($rootScope, $localstorage, $timeout, $q, $http) {
     var service = {};
 
-    service.ConfigsUrl = "Config/"; 
-    service.CurrencysUrl = "Currency/"; 
+    service.ConfigUrl = "Config/"; 
+    service.CurrencyUrl = "Currency/"; 
+    service.TransactionUrl = "Transaction/"; 
 
+    service.DepWithType = {};
+    service.DepWithType.Deposit = 0;
+    service.DepWithType.Withdraw = 1;
+
+    service.StatusTransaction = {};
+    service.StatusTransaction.Pending = 0;
+    service.StatusTransaction.Confirmed = 1;
+    service.StatusTransaction.Cancel = 2;
     
     return service;
 }

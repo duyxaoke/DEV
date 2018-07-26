@@ -5,7 +5,7 @@ namespace Equinox.Domain.Models
 {
     public class Transaction : Entity
     {
-        public Transaction(Guid id, Guid userId, int depWithType, decimal? quantity, string iP, bool approve, DateTime createdDate, DateTime updatedDate)
+        public Transaction(Guid id, string userId, int depWithType, decimal? quantity, string iP, int approve, DateTime createdDate, DateTime updatedDate)
         {
             Id = id;
             UserId = userId;
@@ -20,11 +20,11 @@ namespace Equinox.Domain.Models
         // Empty constructor for EF
         protected Transaction() { }
 
-        public Guid UserId { get; private set; }
+        public string UserId { get; private set; }
         public int DepWithType { get; private set; }
         public decimal? Quantity { get; private set; }
         public string IP { get; private set; }
-        public bool Approve { get; private set; }
+        public int Approve { get; private set; }
         public DateTime CreatedDate { get; private set; }
         public DateTime UpdatedDate { get; private set; }
     }

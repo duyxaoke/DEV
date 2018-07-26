@@ -1,0 +1,156 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="IndexController" ng-cloak>
+    <!-- .card -->
+    <section class="card">
+        <!-- .card-body -->
+        <div class="card-body">
+            <fieldset>
+                <legend>@ViewData["Title"].</legend>
+                <table id="myTable" class="table table-hover"></table>
+            </fieldset>
+        </div>
+        <!-- /.card-body -->
+    </section>
+</div>
+
+@section scripts{
+    <script>
+        var IndexController = ($scope, $rootScope, $timeout, $filter, $compile, ApiHelper, CommonHelper, $q) => {
+
+            //#region declare variable
+            $scope.UpdateMode = false;
+            $scope.Transaction = {};
+            //#endregion
+
+            //#region Datatable
+            $(function () {
+                var peopleList = $('#myTable').DataTable({
+                    serverSide: true,
+                    processing: true,
+                    language: {
+                        paginate: {
+                            previous: '<i class="fa fa-lg fa-angle-left"></i>',
+                            next: '<i class="fa fa-lg fa-angle-right"></i>'
+                        }
+                    },
+                    ajax: {
+                        url: urlApi + CommonHelper.TransactionUrl + "pageData",
+                        type: 'POST',
+                        beforeSend: function (request) {
+                            request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
+                        },
+                        error: function (jqXHR) {
+                            if (jqXHR.status === 401) {
+                                ApiHelper.ConfirmRedirectLogin();
+                            }
+                        }
+                    },
+                    columns: [
+                        { data: "UserName", name: "UserName", title: "UserName", className: 'align-middle', orderable: false, searchable: false },
+                        { data: "DepWithTypeName", name: "DepWithTypeName", title: "DepWithTypeName", className: 'align-middle', orderable: false, searchable: false },
+                        { data: "Quantity", name: "Quantity", title: "Quantity", className: 'align-middle', orderable: false, searchable: false },
+                        { data: "IP", name: "IP", title: "IP", className: 'align-middle', orderable: false, searchable: false }, 
+                        { data: "CreatedDate", name: "CreatedDate", title: "CreatedDate", className: 'align-middle', orderable: false, searchable: false },
+                        { data: "Approve", name: "Approve", title: "Approve", className: 'align-middle', orderable: false, searchable: false },
+                        { data: 'Id', className: 'align-middle text-center', title: "Action", orderable: false, searchable: false }
+                    ],
+                    columnDefs: [
+                        {
+                            targets: 5,
+                            render: function render(data, type, row, meta) {
+                                if (data == CommonHelper.StatusTransaction.Pending) {
+                                    return `<div class="metric-badge">
+                                                <span class="badge badge-dark">
+                                                    <span class="oi oi-media-record pulse mr-1"></span> PENDING</span>
+                                            </div>`;
+                                }
+                                if (data == CommonHelper.StatusTransaction.Confirmed) {
+                                    return `<div class="metric-badge">
+                                                <span class="badge badge-success">
+                                                    <span class="oi oi-media-record pulse mr-1"></span> CONFIRMED</span>
+                                            </div>`;
+                                }
+                                if (data == CommonHelper.StatusTransaction.Cancel) {
+                                    return `<div class="metric-badge">
+                                                <span class="badge badge-warning">
+                                                    <span class="oi oi-media-record pulse mr-1"></span> CANCEL</span>
+                                            </div>`;
+                                }
+                            }
+                        },
+                        {
+                            targets: 6,
+                            width: "150px",
+                            render: function render(data, type, row, meta) {
+                                return `<a class="btn btn-sm btn-success" href="javascript:void(0)" ng-click="SetConfirm('` + data + `');"><i class="oi oi-tags"></i></a>\n
+                                                <a class="btn btn-sm btn-warning" href="javascript:void(0)" ng-click="SetCancel('` + data + `');"><i class="oi oi-tags"></i></a>`;
+                            }
+                        }
+                    ],
+                    createdRow: function (row, data, dataIndex) {
+                        $compile(angular.element(row).contents())($scope);
+                    }
+                });
+            });
+            //#endregion
+
+            //#region SetCancel
+            $scope.SetCancel = function (Id) {
+                bootbox.confirm({
+                    title: "Thông báo",
+                    message: "Cập nhật trạng thái cancel?",
+                    callback: function (result) {
+                        if (result) {
+                            let strApiEndPoint = CommonHelper.TransactionUrl + Id;
+                            ApiHelper.GetMethod(strApiEndPoint)
+                                .then(function (response) {
+                                    $scope.Transaction = response.data;
+                                    $scope.Transaction.Approve = CommonHelper.StatusTransaction.Cancel;
+                                    let strApiEndPoint = CommonHelper.TransactionUrl + "Update";
+                                    ApiHelper.PutMethod(strApiEndPoint, $scope.Transaction)
+                                        .then(function (response) {
+                                            $('#myTable').DataTable().ajax.reload(null, false);
+                                            sys.Alert(true, 'Cập nhật thành công!');
+                                        }).catch(function (response) { });
+                                    defer.resolve(response);
+                                }).catch(function (response) { });
+                        }
+                    }
+                })
+            };
+            //#endregion
+
+            //#region SetConfirm
+            $scope.SetConfirm = function (Id) {
+                bootbox.confirm({
+                    title: "Thông báo",
+                    message: "Cập nhật trạng thái confirm?",
+                    callback: function (result) {
+                        if (result) {
+                            let strApiEndPoint = CommonHelper.TransactionUrl + Id;
+                            ApiHelper.GetMethod(strApiEndPoint)
+                                .then(function (response) {
+                                    $scope.Transaction = response.data;
+                                    $scope.Transaction.Approve = CommonHelper.StatusTransaction.Confirmed;
+                                    let strApiEndPoint = CommonHelper.TransactionUrl + "Update";
+                                    ApiHelper.PutMethod(strApiEndPoint, $scope.Transaction)
+                                        .then(function (response) {
+                                            $('#myTable').DataTable().ajax.reload(null, false);
+                                            sys.Alert(true, 'Cập nhật thành công!');
+                                        }).catch(function (response) { });
+                                    defer.resolve(response);
+                                }).catch(function (response) { });
+                        }
+                    }
+                })
+            };
+            //#endregion
+        }
+        IndexController.$inject = ["$scope", "$rootScope", "$timeout", "$filter", "$compile", "ApiHelper", "CommonHelper", "$q"];
+        addController("IndexController", IndexController);
+    </script>
+}

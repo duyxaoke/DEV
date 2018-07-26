@@ -78,10 +78,10 @@ namespace Equinox.Admin.Controllers
                                                     : await roleManager.CreateAsync(applicationRole);
                 if (roleRuslt.Succeeded)
                 {
-                    return Json(new { status = true, message = Command.MessageSuccess });
+                    return Json(new { status = true, message = Helper.MessageSuccess });
                 }
             }
-            return Json(new { status = false, message = Command.MessageError });
+            return Json(new { status = false, message = Helper.MessageError });
         }
 
         [HttpGet]
@@ -110,11 +110,11 @@ namespace Equinox.Admin.Controllers
                     IdentityResult roleRuslt = roleManager.DeleteAsync(applicationRole).Result;
                     if (roleRuslt.Succeeded)
                     {
-                        return Json(new { status = true, message = Command.MessageSuccess });
+                        return Json(new { status = true, message = Helper.MessageSuccess });
                     }
                 }
             }
-            return Json(new { status = false, message = Command.MessageError });
+            return Json(new { status = false, message = Helper.MessageError });
         }
     }
 }

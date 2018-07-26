@@ -11,9 +11,10 @@ using System;
 namespace Equinox.Infra.Data.Migrations
 {
     [DbContext(typeof(EquinoxContext))]
-    partial class EquinoxContextModelSnapshot : ModelSnapshot
+    [Migration("20180726151111_edit")]
+    partial class edit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
