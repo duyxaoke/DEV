@@ -1,0 +1,305 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="IndexController" ng-cloak>
+    <!-- .card -->
+    <section class="card">
+        <!-- floating action -->
+        <button ng-click="Create()" class="btn btn-success btn-floated">
+            <span class="fa fa-plus"></span>
+        </button>
+        <!-- /floating action -->
+        <!-- .card-body -->
+        <div class="card-body">
+            <fieldset>
+                <legend>@ViewData["Title"].</legend>
+                <table id="myTable" class="table table-hover"></table>
+            </fieldset>
+        </div>
+        <!-- /.card-body -->
+    </section>
+    <!-- Large modal -->
+    <div id="PnModal" class="modal fade" tabindex="-1" User="dialog" aria-labelledby="PnModalLabel" aria-hidden="true">
+        <!-- .modal-dialog -->
+        <div class="modal-dialog" User="document">
+            <!-- .modal-content -->
+            <div class="modal-content">
+                <!-- .modal-header -->
+                <div class="modal-header">
+                    <h5 class="modal-title"> {{ UpdateMode ? "Cập nhật" : "Thêm mới" }} </h5>
+                </div>
+                <!-- /.modal-header -->
+                <!-- .modal-body -->
+                <!-- form .needs-validation -->
+                <form id="frmModal" name="frmModal" class="needs-validation" novalidate="">
+                    <!-- /form .needs-validation -->
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <label>
+                                Name
+                                <abbr title="Required">*</abbr>
+                            </label>
+
+                            <input type="text" class="form-control" ng-model="User.Name" required="">
+                        </div>
+                        <div class="col-md-12">
+                            <label>
+                                UserName
+                            </label>
+                            <input type="text" class="form-control" ng-model="User.UserName">
+                        </div>
+                        <div class="col-md-12">
+                            <label>
+                                Password
+                            </label>
+                            <input type="text" class="form-control" ng-model="User.Password">
+                        </div>
+                        <div class="col-md-12">
+                            <label>
+                                Email
+                            </label>
+                            <input type="text" class="form-control" ng-model="User.Email">
+                        </div>
+                    </div>
+                    <!-- /.modal-body -->
+                    <!-- .modal-footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" ng-disabled="frmModal.$invalid" ng-click="Save()">{{ UpdateMode ? "Cập nhật" : "Thêm" }}</button>
+                    </div>
+                </form>
+                <!-- /.modal-footer -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- Large modal -->
+    <div id="PermisstionModal" class="modal fade" tabindex="-1" User="dialog" aria-labelledby="PnModalLabel" aria-hidden="true">
+        <!-- .modal-dialog -->
+        <div class="modal-dialog" User="document">
+            <!-- .modal-content -->
+            <div class="modal-content">
+                <!-- .modal-header -->
+                <div class="modal-header">
+                    <h5 class="modal-title"> User roles </h5>
+                </div>
+                <!-- /.modal-header -->
+                <!-- .modal-body -->
+                <!-- form .needs-validation -->
+                <form id="frmPermisstionModal" name="frmPermisstionModal" class="needs-validation" novalidate="">
+                    <!-- /form .needs-validation -->
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <!-- .form-group -->
+                            <div class="form-group">
+                                <label>List roles:</label>
+                                <div class="custom-control custom-checkbox mb-1" ng-repeat="item in Permission.UserRoles">
+                                    <input type="checkbox" class="custom-control-input" id="{{item.Value}}" value="{{item.Value}}" ng-checked="item.Selected" 
+                                            ng-click="toggleSelection(item.Value)" name="SelectedRoles[]">
+                                    <label class="custom-control-label" for="{{item.Value}}">{{item.Text}}</label>
+                                </div>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                    </div>
+                    <!-- /.modal-body -->
+                    <!-- .modal-footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" ng-disabled="frmPermisstionModal.$invalid" ng-click="SaveRoles()">Cập nhật</button>
+                    </div>
+                </form>
+                <!-- /.modal-footer -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+</div>
+
+@section scripts{
+    <script>
+        var IndexController = ($scope, $rootScope, $timeout, $filter, $filterFilter, $compile, ApiHelper, CommonHelper, $q) => {
+
+            //#region declare variable
+            $scope.UpdateMode = false;
+            $scope.User = {};
+            $scope.Permission = {};
+            //#endregion
+
+            //#region Datatable
+            $(function () {
+                var peopleList = $('#myTable').DataTable({
+                    serverSide: true,
+                    processing: true,
+                    language: {
+                        paginate: {
+                            previous: '<i class="fa fa-lg fa-angle-left"></i>',
+                            next: '<i class="fa fa-lg fa-angle-right"></i>'
+                        }
+                    },
+                    ajax: {
+                        url: urlApi + CommonHelper.UserUrl + "pageData",
+                        type: 'POST',
+                        beforeSend: function (request) {
+                            request.setRequestHeader("Authorization", "Bearer " + localPrincipal);
+                        },
+                        error: function (jqXHR) {
+                            if (jqXHR.status === 401) {
+                                ApiHelper.ConfirmRedirectLogin();
+                            }
+                        }
+                    },
+                    columns: [
+                        { data: "Name", name: "Name", title: "Name", className: 'align-middle' },
+                        { data: "UserName", name: "UserName", title: "UserName", className: 'align-middle' },
+                        { data: "Email", name: "Email", title: "Email", className: 'align-middle' },
+                        { data: 'Id', className: 'align-middle text-center', title: "Action", orderable: false, searchable: false }
+                    ],
+                    columnDefs: [
+                        {
+                            targets: 3,
+                            width: "150px",
+                            render: function render(data, type, row, meta) {
+                                return `<a class="btn btn-sm btn-secondary" href="javascript:void(0)" ng-click="GetPermission('` + data + `');"><i class="fas fa-user-edit"></i></a>\n
+                                        <a class="btn btn-sm btn-secondary" href="javascript:void(0)" ng-click="Update('` + data + `');"><i class="fa fa-pencil-alt"></i></a>\n
+                                        <a class="btn btn-sm btn-secondary" href="javascript:void(0)" ng-click="Delete('` + data + `');"><i class="far fa-trash-alt"></i></a>`;
+                            }
+                        }
+                    ],
+                    createdRow: function (row, data, dataIndex) {
+                        $compile(angular.element(row).contents())($scope);
+                    }
+                });
+            });
+            //#endregion
+
+            //#region ReadById
+            var ReadById = (Id) => {
+                let defer = $q.defer();
+                let strApiEndPoint = CommonHelper.UserUrl + Id;
+                ApiHelper.GetMethod(strApiEndPoint)
+                    .then(function (response) {
+                        $scope.User = response.data;
+                        defer.resolve(response);
+                    }).catch(function (response) { });
+                return defer.promise;
+            };
+            //#endregion
+            //#region GetRoles
+            var GetRoles = (Id) => {
+                let defer = $q.defer();
+                let strApiEndPoint = CommonHelper.UserUrl + "getRoles?userId=" + Id;
+                ApiHelper.GetMethod(strApiEndPoint)
+                    .then(function (response) {
+                        $scope.Permission = response.data;
+                        defer.resolve(response);
+                    }).catch(function (response) { });
+                return defer.promise;
+            };
+
+            $scope.Permission.SelectedRoles = function selectedRoles() {
+                return filterFilter($scope.Permission.UserRoles, { Selected: true });
+            };
+            // toggle selection for a given fruit by name
+            $scope.toggleSelection = function toggleSelection(value) {
+                var idx = $scope.Permission.SelectedRoles.indexOf(value);
+                // is currently selected
+                if (idx > -1) {
+                    $scope.Permission.SelectedRoles.splice(idx, 1);
+                }
+                // is newly selected
+                else {
+                    $scope.Permission.SelectedRoles.push(value);
+                }
+            }
+
+            //#region Create
+            $scope.Create = function () {
+                $scope.UpdateMode = false;
+                $scope.User = {};
+                $('#PnModal').modal('show');
+            };
+            //#endregion
+
+            //#region Update
+            $scope.Update = function (Id) {
+                $scope.UpdateMode = true;
+                ReadById(Id);
+                $('#PnModal').modal('show');
+            }
+            //#endregion
+
+            //#region Permisstion
+            $scope.GetPermission = function (Id) {
+                GetRoles(Id);
+                $('#PermisstionModal').modal('show');
+            }
+            //#endregion
+
+            //#region Delete
+            $scope.Delete = function (Id) {
+                bootbox.confirm({
+                    title: "Thông báo",
+                    message: "Xác nhận xóa?",
+                    callback: function (result) {
+                        if (result) {
+                            let strApiEndPoint = CommonHelper.UserUrl + "?id=" + Id;
+                            ApiHelper.DeleteMethod(strApiEndPoint)
+                                .then(function (response) {
+                                    $('#myTable').DataTable().ajax.reload(null, false);
+                                    sys.Alert(true, 'Xóa thành công!');
+                                }).catch(function (response) { });
+                        }
+                    }
+                })
+            };
+            //#endregion
+
+            //#region Save
+            $scope.Save = function () {
+                if (!$scope.UpdateMode) {
+                    let strApiEndPoint = CommonHelper.UserUrl + "Create";
+                    ApiHelper.PostMethod(strApiEndPoint, $scope.User)
+                        .then(function (response) {
+                            $('#myTable').DataTable().ajax.reload(null, false);
+                            sys.Alert(true, 'Thêm thành công');
+                        })
+                        .catch(function (response) { });
+                    $('#PnModal').modal('hide');
+                }
+                else {
+                    let strApiEndPoint = CommonHelper.UserUrl + "Update";
+                    ApiHelper.PutMethod(strApiEndPoint, $scope.User)
+                        .then(function (response) {
+                            $('#myTable').DataTable().ajax.reload(null, false);
+                            sys.Alert(true, 'Cập nhật thành công');
+                        }).catch(function (response) { });
+                    $('#PnModal').modal('hide');
+                }
+            };
+            //#endregion
+
+            //#region Save
+            $scope.SaveRoles = function () {
+                let strApiEndPoint = CommonHelper.UserUrl + "editRoles";
+                ApiHelper.PutMethod(strApiEndPoint, $scope.Permission)
+                    .then(function (response) {
+                        $('#myTable').DataTable().ajax.reload(null, false);
+                        sys.Alert(true, 'Cập nhật thành công');
+                    })
+                    .catch(function (response) { });
+                $('#PermisstionModal').modal('hide');
+
+            };
+            //#endregion
+        }
+        IndexController.$inject = ["$scope", "$rootScope", "$timeout", "$filter", "filterFilter", "$compile", "ApiHelper", "CommonHelper", "$q"];
+        addController("IndexController", IndexController);
+    </script>
+}

@@ -10,13 +10,8 @@ namespace Equinox.Infra.CrossCutting.Identity.Models.AccountViewModels
 
         [Required]
         [StringLength(250)]
-        [Display(Name = "Firstname")]
-        public string Firstname { get; set; }
-
-        [Required]
-        [StringLength(250)]
-        [Display(Name = "Lastname")]
-        public string Lastname { get; set; }
+        [Display(Name = "Name")]
+        public string Name { get; set; }
 
         [Required]
         [StringLength(250)]
@@ -29,10 +24,5 @@ namespace Equinox.Infra.CrossCutting.Identity.Models.AccountViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
-
-        [Required]
-        [Phone]
-        public string Mobile { get; set; }
-
     }
 }

@@ -329,7 +329,7 @@ namespace Equinox.API
                             OpenIddictConstants.Permissions.Endpoints.Token,
                             OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
                             OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
-                            OpenIddictConstants.Permissions.Scopes.Email,
+                            OpenIddictConstants.Permissions.Scopes.Address,
                             OpenIddictConstants.Permissions.Scopes.Profile,
                             OpenIddictConstants.Permissions.Scopes.Roles,
                              OpenIddictConstants.Permissions.Prefixes.Scope + "api",
@@ -366,7 +366,8 @@ namespace Equinox.API
                         var descriptor = new OpenIddictScopeDescriptor
                         {
                             Name = "api",
-                            Resources = { "api" }
+                            Resources = { "api" },
+
                         };
 
                         await manager.CreateAsync(descriptor);

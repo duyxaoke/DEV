@@ -11,7 +11,7 @@ using System;
 namespace Equinox.Infra.Data.Migrations
 {
     [DbContext(typeof(EquinoxContext))]
-    [Migration("20180716142417_init")]
+    [Migration("20180805045402_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -133,7 +133,7 @@ namespace Equinox.Infra.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("Id");
 
-                    b.Property<bool>("Approve");
+                    b.Property<int>("Approve");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -147,7 +147,8 @@ namespace Equinox.Infra.Data.Migrations
 
                     b.Property<DateTime>("UpdatedDate");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasMaxLength(50);
 

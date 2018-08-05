@@ -86,13 +86,13 @@ namespace Equinox.Infra.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Approve = table.Column<bool>(nullable: false),
+                    Approve = table.Column<int>(nullable: false),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     DepWithType = table.Column<int>(nullable: false),
                     IP = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true),
                     Quantity = table.Column<decimal>(nullable: true),
                     UpdatedDate = table.Column<DateTime>(nullable: false),
-                    UserId = table.Column<Guid>(type: "varchar(50)", maxLength: 50, nullable: false)
+                    UserId = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {

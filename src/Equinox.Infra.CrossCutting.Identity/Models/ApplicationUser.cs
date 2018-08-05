@@ -13,20 +13,6 @@ namespace Equinox.Infra.CrossCutting.Identity.Models
         [DataType(DataType.DateTime)]
         public DateTime CreatedDate { get; set; }
         [StringLength(250)]
-        public string FirstName { get; set; }
-        [StringLength(250)]
-        public string LastName { get; set; }
-        [Phone]
-        public string Mobile { get; set; }
-
-        [NotMapped]
-        public string Name
-        {
-            get
-            {
-                return this.FirstName + " " + this.LastName;
-            }
-        }
-
+        public string Name { get; set; }
     }
 }

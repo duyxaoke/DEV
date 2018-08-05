@@ -16,7 +16,7 @@ using OpenIddict.Validation;
 namespace Equinox.API.Controllers.Api
 {
     //[Authorize]
-    [Authorize(AuthenticationSchemes = OpenIddictValidationDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Administrator")]
     public class ConfigController : ApiController
     {
         private readonly IConfigAppService _ConfigAppService;

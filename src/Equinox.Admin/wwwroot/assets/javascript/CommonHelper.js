@@ -4,6 +4,8 @@
     service.ConfigUrl = "Config/"; 
     service.CurrencyUrl = "Currency/"; 
     service.TransactionUrl = "Transaction/"; 
+    service.RoleUrl = "Role/"; 
+    service.UserUrl = "User/"; 
 
     service.DepWithType = {};
     service.DepWithType.Deposit = 0;
