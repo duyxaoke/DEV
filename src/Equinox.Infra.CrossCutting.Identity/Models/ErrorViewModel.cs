@@ -9,5 +9,9 @@ namespace Equinox.Infra.CrossCutting.Identity.Models
 
         [Display(Name = "Description")]
         public string ErrorDescription { get; set; }
+        public string RequestId { get; set; }
+
+        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
     }
 }

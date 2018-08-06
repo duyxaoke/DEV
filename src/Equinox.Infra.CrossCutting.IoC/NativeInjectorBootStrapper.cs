@@ -108,8 +108,7 @@ namespace Equinox.Infra.CrossCutting.IoC
             //services.AddScoped<IdentityOptions>();
 
             // Infra - Identity Services
-            services.AddTransient<IEmailSender, AuthEmailMessageSender>();
-            services.AddTransient<ISmsSender, AuthEmailMessageSender>();
+            services.AddTransient<IEmailSender, EmailSender>();
 
             // Infra - Identity
             services.AddScoped<IUser, AspNetUser>();

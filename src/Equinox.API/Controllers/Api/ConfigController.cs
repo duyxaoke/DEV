@@ -17,6 +17,7 @@ namespace Equinox.API.Controllers.Api
 {
     //[Authorize]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "Administrator")]
+    [EnableCors("*")]
     public class ConfigController : ApiController
     {
         private readonly IConfigAppService _ConfigAppService;

@@ -241,7 +241,6 @@ namespace Equinox.API
 
             // New instance every time, only configuration class needs so its ok
             services.AddTransient<ApplicationDbContext>();
-            services.AddTransient<UserResolverService>();
             services.AddScoped<ApiExceptionFilter>();
             services.AddTransient<IEmailSender, AuthEmailMessageSender>();
             services.AddTransient<ISmsSender, AuthEmailMessageSender>();

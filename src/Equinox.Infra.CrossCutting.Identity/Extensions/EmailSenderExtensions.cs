@@ -1,8 +1,7 @@
-using Equinox.Infra.CrossCutting.Identity.Services;
-using System.Text.Encodings.Web;
+﻿using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace Equinox.Infra.CrossCutting.Identity.Extensions
+namespace Equinox.Infra.CrossCutting.Identity.Services
 {
     public static class EmailSenderExtensions
     {
