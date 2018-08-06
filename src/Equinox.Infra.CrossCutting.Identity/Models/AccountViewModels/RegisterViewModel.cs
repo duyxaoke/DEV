@@ -23,5 +23,13 @@ namespace Equinox.Infra.CrossCutting.Identity.Models.AccountViewModels
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        public decimal? Balance { get; set; } = 0;
+        public bool IsEnabled { get; set; } = true;
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        [StringLength(250)]
+        public string Name { get; set; }
+
     }
 }

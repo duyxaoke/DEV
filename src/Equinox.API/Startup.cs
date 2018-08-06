@@ -242,8 +242,7 @@ namespace Equinox.API
             // New instance every time, only configuration class needs so its ok
             services.AddTransient<ApplicationDbContext>();
             services.AddScoped<ApiExceptionFilter>();
-            services.AddTransient<IEmailSender, AuthEmailMessageSender>();
-            services.AddTransient<ISmsSender, AuthEmailMessageSender>();
+            services.AddTransient<IEmailSender, EmailSender>();
             
 
 
@@ -294,7 +293,7 @@ namespace Equinox.API
 
             // Seed the database with the sample applications.
             // Note: in a real world application, this step should be part of a setup script.
-            InitializeAsync(app.ApplicationServices).GetAwaiter().GetResult();
+            //InitializeAsync(app.ApplicationServices).GetAwaiter().GetResult();
         }
 
         private async Task InitializeAsync(IServiceProvider services)

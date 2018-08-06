@@ -5,6 +5,16 @@
     <UserSecretsId>aspnet-Equinox.Server-8379031A-E590-4352-94C3-6C0AF24D879F</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Account\ExternalLoginFailure.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Manage\AddPhoneNumber.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\Components\Header\Default.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\Components\Sidebar\Default.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\Components\Summary\Default.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\Components\UserInfo\Default.cshtml" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.1.0" />
@@ -61,6 +71,69 @@
   <ItemGroup>
     <ProjectReference Include="..\Equinox.Infra.CrossCutting.Identity\Equinox.Infra.CrossCutting.Identity.csproj" />
     <ProjectReference Include="..\Equinox.Infra.CrossCutting.IoC\Equinox.Infra.CrossCutting.IoC.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Account\ConfirmEmail.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Account\ForgotPassword.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Account\ForgotPasswordConfirmation.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Account\Lockout.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Account\Login.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Account\Register.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Account\ResetPassword.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Account\ResetPasswordConfirmation.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Account\SendCode.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Account\VerifyCode.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Manage\ChangePassword.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Manage\Index.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Manage\ManageLogins.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Manage\RemoveLogin.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Manage\SetPassword.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Manage\VerifyPhoneNumber.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Shared\Error.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Shared\_Layout.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Shared\_LoginPartial.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Shared\_ValidationScriptsPartial.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
