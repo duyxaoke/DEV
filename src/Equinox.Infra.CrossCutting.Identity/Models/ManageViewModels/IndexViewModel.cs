@@ -19,6 +19,12 @@ namespace Equinox.Infra.CrossCutting.Identity.Models.ManageViewModels
         [Phone]
         [Display(Name = "Phone number")]
         public string PhoneNumber { get; set; }
+        public decimal? Balance { get; set; } = 0;
+        public bool IsEnabled { get; set; } = true;
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        [StringLength(250)]
+        public string Name { get; set; }
 
         public string StatusMessage { get; set; }
     }

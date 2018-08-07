@@ -1,4 +1,10 @@
-﻿<aside class="app-aside">
+﻿@using Equinox.Server.Views.Manage
+@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+
+<aside class="app-aside">
     <!-- .aside-content -->
     <div class="aside-content">
         <!-- .aside-header -->
@@ -44,35 +50,32 @@
                 <!-- .menu -->
                 <ul class="menu">
                     <li class="menu-item">
-                        <a href="index-2.html" class="menu-link">
-                            <span class="menu-icon oi oi-dashboard"></span>
-                            <span class="menu-text">Dashboard</span>
+                        <a asp-action="Index" asp-controller="Manage" class="menu-link">
+                            <span class="menu-icon oi oi-person"></span>
+                            <span class="menu-text">Profile</span>
                         </a>
                     </li>
-                    <!-- .menu-item -->
-                    <li class="menu-item has-child">
-                        <a href="#" class="menu-link">
-                            <span class="menu-icon oi oi-pencil"></span>
-                            <span class="menu-text">Forms</span>
+                    <li class="menu-item">
+                        <a asp-action="ChangePassword" asp-controller="Manage" class="menu-link">
+                            <span class="menu-icon oi oi-lock-unlocked"></span>
+                            <span class="menu-text">Change password</span>
                         </a>
-                        <!-- child menu -->
-                        <ul class="menu">
-                            <li class="menu-item">
-                                <a href="form-basic.html" class="menu-link">Basic Elements</a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="form-autocompletes.html" class="menu-link">Autocompletes</a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="form-pickers.html" class="menu-link">Pickers</a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="form-editors.html" class="menu-link">Editors</a>
-                            </li>
-                        </ul>
-                        <!-- /child menu -->
                     </li>
-                    <!-- /.menu-item -->
+                    @if (hasExternalLogins)
+                    {
+                        <li class="menu-item">
+                            <a asp-action="ExternalLogins" asp-controller="Manage" class="menu-link">
+                                <span class="menu-icon oi oi-fire"></span>
+                                <span class="menu-text">External logins</span>
+                            </a>
+                        </li>
+                    }
+                    <li class="menu-item">
+                        <a asp-action="TwoFactorAuthentication" asp-controller="Manage" class="menu-link">
+                            <span class="menu-icon oi oi-cloudy"></span>
+                            <span class="menu-text">Two-factor authentication</span>
+                        </a>
+                    </li>
 
                 </ul>
                 <!-- /.menu -->

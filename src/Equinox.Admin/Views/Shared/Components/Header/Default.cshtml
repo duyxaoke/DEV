@@ -317,9 +317,8 @@
                         <a class="dropdown-item" asp-action="Index" asp-controller="Manage">
                             <span class="dropdown-icon oi oi-person"></span> Profile
                         </a>
-                        <a class="dropdown-item" href="/signout">
-                            <span class="dropdown-icon oi oi-person"></span> Logout
-                        </a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Logout">
+                        <span class="dropdown-icon oi oi-person"></span> Logout</a>
                     </div>
                     <!-- /.dropdown-menu -->
                 </div>

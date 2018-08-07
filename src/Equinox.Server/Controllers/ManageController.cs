@@ -58,6 +58,8 @@ namespace Equinox.Server.Controllers
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 IsEmailConfirmed = user.EmailConfirmed,
+                Name = user.Name,
+                Balance = user.Balance,
                 StatusMessage = StatusMessage
             };
 
@@ -98,6 +100,8 @@ namespace Equinox.Server.Controllers
                     throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
                 }
             }
+            user.Name = model.Name;
+            var result = await _userManager.UpdateAsync(user);
 
             StatusMessage = "Your profile has been updated";
             return RedirectToAction(nameof(Index));

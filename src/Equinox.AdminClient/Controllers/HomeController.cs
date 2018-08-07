@@ -23,6 +23,12 @@ namespace Equinox.AdminClient.Controllers
             return View();
         }
 
+        [Authorize(Policy = "Administrator")]
+        public IActionResult SecureAdmin()
+        {
+            return Ok("is admin");
+        }
+
         public async Task Logout()
         {
             await HttpContext.SignOutAsync("Cookies");

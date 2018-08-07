@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using Equinox.Infra.CrossCutting.Identity.Models;
 using Equinox.Infra.CrossCutting.Identity.Models.AccountViewModels;
 using Equinox.Infra.CrossCutting.Identity.Services;
+using Equinox.Infra.CrossCutting.Identity.Data;
 
 namespace Equinox.Server.Controllers
 {
@@ -28,13 +29,16 @@ namespace Equinox.Server.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
+        private readonly ApplicationDbContext _applicationDbContext;
         private readonly AccountService _account;
+        private static bool _databaseChecked;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ILogger<AccountController> logger,
+            ApplicationDbContext applicationDbContext,
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IHttpContextAccessor httpContextAccessor,
@@ -45,6 +49,7 @@ namespace Equinox.Server.Controllers
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
+            _applicationDbContext = applicationDbContext;
             _account = new AccountService(interaction, httpContextAccessor, schemeProvider, clientStore);
         }
 
@@ -67,12 +72,13 @@ namespace Equinox.Server.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
+            EnsureDatabaseCreated(_applicationDbContext);
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
@@ -228,10 +234,11 @@ namespace Equinox.Server.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
+            EnsureDatabaseCreated(_applicationDbContext);
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email, Name = model.Name, Balance = model.Balance, CreatedDate = model.CreatedDate };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -300,6 +307,7 @@ namespace Equinox.Server.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
+            EnsureDatabaseCreated(_applicationDbContext);
             // Request a redirect to the external login provider.
             var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
@@ -483,6 +491,19 @@ namespace Equinox.Server.Controllers
         }
 
         #region Helpers
+        // The following code creates the database and schema if they don't exist.
+        // This is a temporary workaround since deploying database through EF migrations is
+        // not yet supported in this release.
+        // Please see this http://go.microsoft.com/fwlink/?LinkID=615859 for more information on how to do deploy the database
+        // when publishing your application.
+        private static void EnsureDatabaseCreated(ApplicationDbContext context)
+        {
+            if (!_databaseChecked)
+            {
+                _databaseChecked = true;
+                context.Database.EnsureCreated();
+            }
+        }
 
         private void AddErrors(IdentityResult result)
         {
@@ -490,6 +511,10 @@ namespace Equinox.Server.Controllers
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
+        }
+        private async Task<ApplicationUser> GetCurrentUserAsync()
+        {
+            return await _userManager.GetUserAsync(User);
         }
 
         private IActionResult RedirectToLocal(string returnUrl)

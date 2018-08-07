@@ -1,4 +1,5 @@
-﻿<header class="app-header">
+﻿
+<header class="app-header">
     <!-- .top-bar -->
     <div class="top-bar">
         <!-- .top-bar-brand -->
@@ -314,9 +315,6 @@
                     <!-- .dropdown-menu -->
                     <div class="dropdown-menu">
                         <h6 class="dropdown-header d-none d-md-block d-lg-none"> @User.Identity.Name </h6>
-                        <a class="dropdown-item" asp-action="Index" asp-controller="Manage">
-                            <span class="dropdown-icon oi oi-person"></span> Profile
-                        </a>
                         <form asp-controller="Account" asp-action="LogOff" method="post" role="form">
                             <button class="dropdown-item" type="submit" style="cursor:pointer">
                                 <span class="dropdown-icon oi oi-account-logout"></span> Logout

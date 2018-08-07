@@ -7,7 +7,7 @@ namespace Equinox.ApiClient.Controllers
     public class IdentityController : Controller
     {
         [HttpGet]
-        [Authorize("Founder")]
+        [Authorize]
         [Route("api/resource-with-policy")]
         public IActionResult ResourceWithPolicy()
         {

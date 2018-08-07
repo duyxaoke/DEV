@@ -21,29 +21,26 @@ namespace Equinox.Admin.Controllers
             _client = client;
         }
 
+
+        public async Task CallApi()
+        {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var client = new HttpClient();
+            client.SetBearerToken(accessToken);
+            var content = await client.GetStringAsync("http://localhost:50001/api/Test/list");
+        }
+
+
         [HttpGet("~/")]
         public ActionResult Index()
         {
             return View("Home");
         }
-
-        [Authorize, HttpPost("~/")]
-        public async Task<ActionResult> Index(CancellationToken cancellationToken)
+        public async Task Logout()
         {
-            var token = await HttpContext.GetTokenAsync(CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectParameterNames.AccessToken);
-            if (string.IsNullOrEmpty(token))
-            {
-                throw new InvalidOperationException("The access token cannot be found in the authentication ticket. " +
-                                                    "Make sure that SaveTokens is set to true in the OIDC options.");
-            }
-
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:50000/api/config/list");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var response = await _client.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            return View("Home", model: await response.Content.ReadAsStringAsync());
+            await HttpContext.SignOutAsync("Cookies");
+            await HttpContext.SignOutAsync("oidc");
         }
+
     }
 }

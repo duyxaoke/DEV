@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,7 +37,7 @@ namespace Equinox.AdminClient
                 {
                     options.SignInScheme = "Cookies";
 
-                    options.Authority = "http://localhost:55714";
+                    options.Authority = "http://localhost:5000";
                     options.RequireHttpsMetadata = false;
 
                     options.ClientId = "mvc";
@@ -50,7 +51,7 @@ namespace Equinox.AdminClient
                     options.Scope.Add("offline_access");
                 });
 
-            services.AddAuthorization(options => options.AddPolicy("Founder", policy => policy.RequireClaim("Employee", "Mosalla")));
+            services.AddAuthorization(options => options.AddPolicy("Administrator", policy => policy.RequireClaim("role", "Administrator")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

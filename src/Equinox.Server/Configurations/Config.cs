@@ -10,7 +10,7 @@ namespace Equinox.Server.Configurations
         {
             return new List<ApiResource>
             {
-                new ApiResource("Api1", "Protected Api")
+                new ApiResource("Api1", "Protected Api", new List<string> {"role"})
             };
         }
 
@@ -40,8 +40,8 @@ namespace Equinox.Server.Configurations
                         new Secret("secret".Sha256())
                     },
 
-                    RedirectUris = {"http://localhost:55804/signin-oidc"},
-                    PostLogoutRedirectUris = {"http://localhost:55804/signout-callback-oidc"},
+                    RedirectUris = {"http://localhost:50002/signin-oidc"},
+                    PostLogoutRedirectUris = {"http://localhost:50002/signout-callback-oidc"},
 
                     AllowedScopes =
                     {
@@ -52,7 +52,7 @@ namespace Equinox.Server.Configurations
                     AllowOfflineAccess = true,
                     AlwaysSendClientClaims = true,
                     AlwaysIncludeUserClaimsInIdToken = true
-                }
+                },
             };
         }
     }

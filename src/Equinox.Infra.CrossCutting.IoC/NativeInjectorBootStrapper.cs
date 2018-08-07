@@ -10,7 +10,6 @@ using Equinox.Domain.Events;
 using Equinox.Domain.Interfaces;
 using Equinox.Infra.CrossCutting.Bus;
 using Equinox.Infra.CrossCutting.Identity.Authorization;
-using Equinox.Infra.CrossCutting.Identity.Data;
 using Equinox.Infra.CrossCutting.Identity.Models;
 using Equinox.Infra.CrossCutting.Identity.Services;
 using Equinox.Infra.Data.Context;
@@ -21,9 +20,6 @@ using Equinox.Infra.Data.UoW;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 

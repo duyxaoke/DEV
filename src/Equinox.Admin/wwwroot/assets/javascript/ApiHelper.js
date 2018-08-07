@@ -338,7 +338,7 @@ var ApiHelper = function ($rootScope, $localstorage, $timeout, $q, $http) {
             message: "Phiên làm việc đã hết hạn, vui lòng đăng nhập lại…",
             callback: function (result) {
                 $rootScope.IsShowConfirmRedirectLogin = false;
-                window.location.href = "/signout";
+                window.location.href = "/Home/Logout";
             }
         })
     }

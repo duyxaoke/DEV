@@ -20,8 +20,8 @@ namespace Equinox.Admin.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                var token = HttpContext.GetTokenAsync(CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectParameterNames.AccessToken).Result;
-                ViewBag.Token = token;
+                var accessToken = HttpContext.GetTokenAsync("access_token").Result;
+                ViewBag.Token = accessToken;
             }
         }
         public bool IsValidOperation()

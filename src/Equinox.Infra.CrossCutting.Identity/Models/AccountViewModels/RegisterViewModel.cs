@@ -30,6 +30,7 @@ namespace Equinox.Infra.CrossCutting.Identity.Models.AccountViewModels
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         [StringLength(250)]
         public string Name { get; set; }
+        public string Username { get; set; }
 
     }
 }

@@ -7,15 +7,26 @@
 <fieldset>
     <legend>@ViewData["Title"].</legend>
     @Html.Partial("_StatusMessage", Model.StatusMessage)
-
     <div>
         <hr />
         <form method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <div class="form-label-group">
+                    <input asp-for="Balance" class="form-control" disabled>
+                    <label asp-for="Balance"></label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-label-group">
                     <input asp-for="Username" class="form-control" disabled>
                     <label asp-for="Username"></label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-label-group">
+                    <input asp-for="Name" class="form-control" placeholder="Full name">
+                    <label asp-for="Name"></label>
                 </div>
             </div>
             <div class="form-group">
@@ -33,7 +44,7 @@
                     <div class="input-group">
                         <input asp-for="Email" class="form-control">
                         <div class="input-group-append">
-                            <button class="btn btn-danger" asp-action="SendVerificationEmail">Send verification email</button>
+                            <button class="btn btn-default" asp-action="SendVerificationEmail">Send verification email</button>
                         </div>
                     </div>
                 }
@@ -44,7 +55,9 @@
                     <label asp-for="PhoneNumber"></label>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
         </form>
 
     </div>
